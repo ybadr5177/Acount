@@ -1,0 +1,75 @@
+﻿@model IEnumerable<CategoryViewModel>
+@{
+    ViewData["Title"] = "Categrey";
+}
+
+<h2 class="mt-4"> Categrey</h2>
+<br />
+<a asp-action="CreatCategrey" asp-controller="CozaMaster" class="custom-button">+ Create a New Category</a>
+
+
+
+
+
+<div class="card">
+    <h5 class="card-header"> Categrey Table</h5>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Picture/الصورة</th>
+                    <th>Name  En</th>
+                    <th>الاسم بلغة العربية</th>
+                    <th>Category</th>
+
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+
+
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td> <img src="@user.Picture" alt="OurStrategy Image" style=" width: 60px; height: 50px;"></td>
+                        <td>@user?.Name_EN</td>
+                        <td>@user?.Name_Ar</td>
+
+                        <td class="action-icons">
+
+                            <div class ="d-flex gap-2">
+                                <a asp-action="EditCategrey"
+                                   asp-controller="CozaMaster"
+                                   asp-route-id="@user.id"
+                                   class="badge btn-warning d-flex justify-content-center align-items-center btn btn-icon  btn-sm"
+                                   title="Edit">
+                                    <i class="bx bx-edit"></i>
+                                </a>
+
+                                @*  <a asp-action="DeleteCategrey" asp-controller="CozaMaster" asp-route-id="@user?.id" class="badge rounded-pill btn-danger">Delete</a> *@
+                                <a asp-action="DeleteCategrey"
+                                   asp-controller="CozaMaster"
+                                   asp-route-id="@user?.id"
+                                   class="badge  d-flex btn-danger d-flex justify-content-center align-items-center btn btn-icon  btn-sm"
+                                   title="Delete">
+                                    <i class="tf-icons bx bx-trash"></i>
+                                </a>
+
+                            </div>
+                           @*  <a asp-action="EditCategrey" asp-controller="CozaMaster" asp-route-id="@user.id" class="badge rounded-pill btn-warning">Edit</a> *@
+                          
+
+
+
+                        </td>
+                    </tr>
+                }
+
+
+
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+

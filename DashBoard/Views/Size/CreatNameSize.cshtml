@@ -1,0 +1,13 @@
+﻿@model NameSizeViewModel
+@{
+    ViewData["Title"] = "CreatNameSize";
+}
+
+<form class="custom-form" asp-controller="Size" asp-action="CreatNameSize" method="post">
+
+    <label for="Name" class="form-label"> Size Name</label>
+    <input type="text" class="form-control" id="SizeNames" name="SizeNames" placeholder="Type the Name here">
+    <br/>
+    <button class="btn btn-success d-grid w-100" type="submit">submit </button>
+</form>
+

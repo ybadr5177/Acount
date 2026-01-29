@@ -1,0 +1,464 @@
+@model IReadOnlyList<FavoritesViewModel>
+@{
+    ViewData["Title"] = "GetFavorites";
+    Layout = "_LayoutTheOtherPage";
+}
+@inject IViewLocalizer localizer
+@{
+    var isRTL = CultureInfo.CurrentCulture.Name.StartsWith("ar");
+}
+<style>
+    /* ✅ تنسيقات الكاونتر */
+    .counter-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        gap: 8px;
+    }
+
+    .counter-input {
+        width: 45px;
+        height: 40px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        text-align: center;
+        font-size: 16px;
+    }
+
+        .counter-input::-webkit-outer-spin-button,
+        .counter-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+    /* ✅ الأزرار بشكل أنيق */
+    .counter-button {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+        .counter-button:hover {
+            background-color: #e9ecef;
+        }
+
+    /* ✅ القلوب */
+    .js-addwish-b2 .icon-heart1 {
+        display: block;
+    }
+
+    .js-addwish-b2 .icon-heart2 {
+        display: none;
+    }
+
+    .js-addwish-b2.active .icon-heart1 {
+        display: none;
+    }
+
+    .js-addwish-b2.active .icon-heart2 {
+        display: block;
+    }
+
+    /* ✅ أيقونة السلة */
+    .btn-add-to-cart {
+        background: transparent;
+        border: none;
+        margin-left: 10px;
+        cursor: pointer;
+        font-size: 18px;
+        color: #444;
+        transition: color 0.2s ease;
+    }
+
+        .btn-add-to-cart:hover {
+            color: #28a745;
+        }
+</style>
+
+<h4>@localizer["Favorites"]</h4>
+
+<section class="bg0 p-t-23 p-b-140">
+    <div id="productsContainer" class="row isotope-grid">
+        @foreach (var item in Model)
+        {
+            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+                <a asp-action="DetailsProduct" asp-controller="Mastar" asp-route-Id="@item.Product.Id" class="block2">
+
+                    <!-- ✅ صور المنتج (سلايدر) -->
+                    <div class="block2-pic hov-img0">
+                        <div id="carousel-@item.Product.Id" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                @if (item.Product.Picture != null && item.Product.Picture.Any())
+                                {
+                                    var index = 0;
+                                    foreach (var img in item.Product.Picture)
+                                    {
+                                        <div class="carousel-item @(index == 0 ? "active" : "")">
+                                            <img src="@img" onerror="this.src='/images/product-05.jpg';" alt="IMG-PRODUCT">
+                                        </div>
+                                        index++;
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="carousel-item active">
+                                        <img src="@item.Product.Picture" class="d-block w-100" alt="IMG-PRODUCT">
+                                    </div>
+                                }
+                            </div>
+
+                            @if (item.Product.Picture?.Count > 1)
+                            {
+                                <button class="carousel-control-prev stop-link" type="button" data-bs-target="#carousel-@item.Product.Id" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon bg-dark rounded-circle p-2"></span>
+                                </button>
+                                <button class="carousel-control-next stop-link" type="button" data-bs-target="#carousel-@item.Product.Id" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon bg-dark rounded-circle p-2"></span>
+                                </button>
+                            }
+                        </div>
+
+                        <a asp-action="DetailsProduct" asp-controller="Mastar" asp-route-Id="@item.Product.Id"
+                           class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 trans-04">
+                            @localizer["QuickView"]
+                        </a>
+                    </div>
+
+                    <!-- ✅ تفاصيل المنتج -->
+                    <div class="block2-txt flex-w flex-t p-t-14">
+                        <div class="block2-txt-child1 flex-col-l">
+                            <a asp-action="DetailsProduct" asp-controller="Mastar" asp-route-Id="@item.Product.Id"
+                               class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                @item.Product.Address
+                            </a>
+
+                            <!-- ✅ السعر والخصم -->
+                            @if (item.Product.BaseDiscountPrice < item.Product.Price)
+                            {
+                                <span class="stext-105 cl3 fw-bold text-success">
+                                    @item.Product.BaseDiscountPrice جنيه
+                                </span>
+                                <span class="text-danger" style="text-decoration: line-through; margin-left:5px;">
+                                    @item.Product.Price جنيه
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="stext-105 cl3 fw-bold">
+                                    @item.Product.Price جنيه
+                                </span>
+                            }
+
+                            <!-- ✅ اختيار المقاس + الكمية -->
+                            <div class="product-options p-t-10">
+                                <select class="form-control sizeSelect" data-product-id="@item.Product.Id" style="max-width:150px;">
+                                    <option value="" data-price="@item.Product.Price" data-discount="@item.Product.BaseDiscountPrice">
+                                        Size
+                                    </option>
+                                    @foreach (var size in item.Product.ProductSize ?? Enumerable.Empty<ProductSizeViewModel>())
+                                    {
+                                        <option value="@size.Id" data-price="@size.Price" data-discount="@size.DiscountPrice">
+                                            @size.SizeLabel
+                                        </option>
+                                    }
+                                </select>
+
+                                <div class="counter-container p-t-10">
+                                    <button class="counter-button minus" data-product-id="@item.Product.Id">-</button>
+                                    <input type="number" class="counter-input" value="1" min="1" id="counterInput-@item.Product.Id">
+                                    <button class="counter-button plus" data-product-id="@item.Product.Id">+</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ✅ القلب + السلة -->
+                        <div class="block2-txt-child2 flex-r p-t-3">
+                            <a href="javascript:void(0)" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2"
+                               data-productid="@item.Product.Id">
+                                <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
+                                <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
+                            </a>
+                            <button class="btn-add-to-cart" asp-action="AddItem" asp-controller="Basket" type="button"
+                                    data-product-id="@item.Product.Id">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- االخاص با البحث واالفلتره -->
+<script>
+    // helper: يبني كويري سترنج من قيمة البحث فقط
+    function toQueryString(value) {
+        if (!value) return "";
+        return `?Search=${encodeURIComponent(value)}`;
+    }
+
+    // دالة تحميل المنتجات عبر Ajax
+    async function loadProducts(qs) {
+        const url = '/Mastar/ProductsPartial' + (qs || '');
+        const container = document.getElementById('productsContainer');
+        container.innerHTML = '<div class="text-center w-100 p-5">Loading...</div>';
+
+        try {
+            const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const html = await res.text();
+            container.innerHTML = html;
+            initProductEvents();
+            const indexUrl = '/Mastar/Index' + (qs || '');
+            window.history.pushState({}, '', indexUrl);
+        } catch (error) {
+            console.error('Error loading products:', error);
+            container.innerHTML = '<div class="text-center w-100 p-5">Failed to load products. Please try again later.</div>';
+        }
+    }
+
+    // ... (بقية الدوال الأخرى) ...
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // ... (كود wireCarouselStopLink) ...
+
+        // ✅ التعديل الرئيسي هنا: كود فلترة الكاتيجوري والفرز
+        // هذه الدالة الآن تتعامل مع كل الفلاتر
+        function handleFilterClick(e) {
+            e.preventDefault();
+
+            const currentQs = window.location.search;
+            const urlParams = new URLSearchParams(currentQs);
+            const newParam = this.getAttribute('data-query');
+
+            if (newParam) {
+                // فلتر عادي (مثلاً، categoryId=1 أو SortBy=PriceAsc)
+                const [key, value] = newParam.split('=');
+                urlParams.set(key, value);
+            } else {
+                // "All Products" (إعادة ضبط جميع الفلاتر)
+                urlParams.delete('CategoryId');
+                urlParams.delete('SortBy');
+                urlParams.delete('Search');
+            }
+
+            // تحديث حالة الأكتيف
+            document.querySelectorAll('[data-ajax="true"]').forEach(a => a.classList.remove('how-active1', 'filter-link-active'));
+            this.classList.add('how-active1', 'filter-link-active');
+
+            loadProducts('?' + urlParams.toString());
+        }
+
+        // إرفاق الحدث للكاتيجوري
+        document.querySelectorAll('.filter-tope-group a[data-ajax="true"]').forEach(a => {
+            a.addEventListener('click', handleFilterClick);
+        });
+
+        // إرفاق الحدث للفرز
+        document.querySelectorAll('.panel-filter ul a[data-ajax="true"]').forEach(a => {
+            a.addEventListener('click', handleFilterClick);
+        });
+
+        // ✅ كود البحث (AJAX) - تم تعديله لدمج الفلاتر بشكل صحيح
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+
+        if (searchInput && searchButton) {
+            function handleSearch(e) {
+                e.preventDefault();
+                const value = searchInput.value;
+                const currentQs = window.location.search;
+                const urlParams = new URLSearchParams(currentQs);
+
+                if (value) {
+                    urlParams.set('Search', value);
+                } else {
+                    urlParams.delete('Search');
+                }
+
+                loadProducts('?' + urlParams.toString());
+            }
+
+            searchButton.addEventListener('click', handleSearch);
+            searchInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    handleSearch(e);
+                }
+            });
+        }
+    });
+</script>
+<script>
+    // دالة لتهيئة أحداث المنتجات
+    function initProductEvents() {
+        // ✅ الأحداث الخاصة بتغيير المقاس
+        $(document).off('change', '.sizeSelect').on('change', '.sizeSelect', function () {
+            console.log("🟡 تم تغيير المقاس");
+
+            var id = $(this).data('product-id');
+            var selectedOption = $(this).find('option:selected');
+            var price = selectedOption.data("price");
+            var discount = selectedOption.data("discount");
+
+            console.log({ id, price, discount });
+
+            var priceElement = $('#sizePrice-' + id);
+            var discountElement = $('#discountPrice-' + id);
+
+            if (discount && discount < price) {
+                priceElement.text(discount + " جنيه").removeClass("text-success").addClass("text-success");
+                discountElement.text(price + " جنيه").show();
+            } else {
+                priceElement.text(price + " جنيه").removeClass("text-success");
+                discountElement.hide();
+            }
+        });
+
+        // ✅ كود العداد المحدث
+        $('.counter-container').each(function() {
+            const counterContainer = $(this);
+            const minusButton = counterContainer.find('.minus');
+            const plusButton = counterContainer.find('.plus');
+            const counterInput = counterContainer.find('.counter-input');
+
+            minusButton.off('click').on('click', (e) => {
+                e.preventDefault();
+                let value = parseInt(counterInput.val());
+                if (value > 1) {
+                    counterInput.val(value - 1);
+                }
+            });
+
+            plusButton.off('click').on('click', (e) => {
+                e.preventDefault();
+                let value = parseInt(counterInput.val());
+                counterInput.val(value + 1);
+            });
+        });
+
+       // ✅ تعديل زر السلة للحصول على البيانات المحدثة
+        $(document).off('click', '.btn-add-to-cart').on('click', '.btn-add-to-cart', function (e) {
+            e.preventDefault();
+
+            var productId = $(this).data('product-id');
+            var productContainer = $(this).closest('.block2-txt').closest('.block2-txt').find('.block2-txt-child1');
+
+
+            // ✅ الحصول على الكمية من حقل الإدخال
+
+            var counterInput = $(this).closest('.block2-txt').find('.counter-input');
+              var qty = counterInput.val();
+
+            // ✅ الحصول على المقاس المحدد
+            var sizeSelect = $('#sizeSelect-' + productId);
+            var selectedSizeId = sizeSelect.val();
+            var selectedOption = sizeSelect.find('option:selected');
+
+            // ✅ الحصول على السعر المناسب (المنتج أو المقاس)
+            var priceElement = $('#sizePrice-' + productId);
+            var priceText = priceElement.text().replace(' جنيه', '').trim();
+            var price = parseFloat(priceText);
+
+            console.log("🛒 البيانات المرسلة:", {
+                productId: productId,
+                quantity: qty,
+                sizeId: selectedSizeId,
+                price: price
+            });
+
+
+
+            // ✅ إرسال البيانات عبر Ajax
+            $.ajax({
+                url: '@Url.Action("AddItem", "Basket")',
+                type: 'POST',
+                data: {
+                    Id: productId,
+                    Quantity: qty,
+                    SizeId: selectedSizeId,
+                    Price: price
+                },
+                success: function (res) {
+                    if (res.success) {
+                        alert("✅ تم إضافة المنتج إلى السلة بنجاح!");
+                    } else {
+                        alert("❌ " + res.message);
+                    }
+                },
+                error: function (err) {
+                    alert("❌ حدث خطأ أثناء إضافة المنتج إلى السلة!");
+                    console.error(err);
+                }
+            });
+        });
+    }
+
+    // استدعاء الدالة عند تحميل الصفحة
+    $(document).ready(function () {
+        initProductEvents();
+    });
+</script>
+
+<!--Favorite Script-->
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        const buttons = document.querySelectorAll(".js-addwish-b2");
+
+        for (let btn of buttons) {
+            const productId = btn.dataset.productid;
+
+            // ✅ تشيك أول ما الصفحة تفتح
+            try {
+                const checkRes = await fetch(`/Favorite/IsFavorite?productId=${productId}`);
+                if (checkRes.status === 200) {
+                    const result = await checkRes.json();
+                    if (result.isFav === true) {
+                        btn.classList.add("active"); // 🔹 يظهر القلب المليان
+                    } else {
+                        btn.classList.remove("active"); // 🔹 يظهر القلب الفاضي
+                    }
+                }
+            } catch (err) {
+                console.warn("User not logged in, skip fav check.");
+            }
+
+            // ✅ لما يضغط على القلب
+            btn.addEventListener("click", async (e) => {
+                e.preventDefault();
+
+                if (btn.classList.contains("active")) {
+                    // لو موجود → احذف
+                    const res = await fetch(`/Favorite/RemoveFavorite?productId=${productId}`, { method: "POST" });
+                    if (res.status === 401) {
+                        window.location.href = "/Account/Login";
+                        return;
+                    }
+                    btn.classList.remove("active"); // 🔹 يرجّع القلب فاضي
+
+                } else {
+                    // لو مش موجود → أضف
+                    const res = await fetch(`/Favorite/AddFavorite?productId=${productId}`, { method: "POST" });
+                    if (res.status === 401) {
+                        window.location.href = "/Account/Login";
+                        return;
+                    }
+                    btn.classList.add("active"); // 🔹 يخلي القلب مليان
+                }
+            });
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script><!-- Select2 JS -->

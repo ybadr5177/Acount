@@ -1,0 +1,1208 @@
+﻿@model CustomerBasketViewModel
+@{
+    ViewData["Title"] = "عربة التسوق";
+    Layout = "_LayoutTheOtherPage";
+}
+@inject IViewLocalizer localizer
+@{
+    var isRTL = CultureInfo.CurrentCulture.Name.StartsWith("ar");
+}
+
+
+<style>
+    /* الصفحة العامة */
+    .adreesbasket-page {
+        max-width: 1100px;
+        margin: 30px auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    /* كل مربع */
+    .adreesbasket-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+
+        .adreesbasket-section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+    /* المنتجات */
+    .adreesbasket-products-box {
+        grid-column: 1 / 2;
+    }
+
+    .adreesbasket-items {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .adreesbasket-item {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+
+    .adreesbasket-item-info {
+        flex: 1;
+    }
+
+    .adreesbasket-item-name {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .adreesbasket-item-price {
+        color: #28a745;
+        font-weight: bold;
+    }
+
+    /* العنوان */
+    .adreesbasket-address-box {
+        grid-column: 2 / 3;
+        background: #f7f7f7;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+        .adreesbasket-address-box:hover {
+            background: #ececec;
+        }
+
+    .adreesbasket-address-short p {
+        margin: 5px 0;
+        font-size: 14px;
+    }
+
+    /* ملخص الطلب */
+    .adreesbasket-summary-box,
+    .adreesbasket-payment-box {
+        grid-column: 2 / 3;
+    }
+
+    .adreesbasket-summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 8px 0;
+    }
+
+        .adreesbasket-summary-row.total {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+    /* أزرار */
+    .adreesbasket-btn {
+        background: #000;
+        color: #fff;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+        .adreesbasket-btn:hover {
+            background: #333;
+        }
+
+    .adreesbasket-btn-pay {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .adreesbasket-btn-cancel {
+        background: #888;
+    }
+
+    /* البوباب */
+    .adreesbasket-popup {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: flex-start;
+        z-index: 9999;
+        padding-top: 50px;
+    }
+
+    .adreesbasket-popup-content {
+        background: #fff;
+        padding: 25px;
+        border-radius: 12px;
+        width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+        .adreesbasket-popup-content h3 {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+    .adreesbasket-popup-address-item {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #fafafa;
+        text-align: right;
+    }
+
+        .adreesbasket-popup-address-item.active {
+            border: 2px solid #007bff;
+            background: #f0f8ff;
+        }
+
+    .adreesbasket-popup-address-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+
+    .adreesbasket-popup-tag {
+        background: #007bff;
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+    }
+
+    .adreesbasket-popup-default {
+        color: #007bff;
+        font-weight: bold;
+    }
+
+    .adreesbasket-popup-actions {
+        margin-top: 10px;
+    }
+
+    .adreesbasket-popup-link {
+        background: none;
+        border: none;
+        color: #007bff;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+        .adreesbasket-popup-link.delete {
+            color: red;
+        }
+
+    .adreesbasket-popup-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .pay-options-vertical {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* الكروت */
+    .pay-card {
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        padding: 15px;
+        background: #fff;
+        cursor: pointer;
+        transition: 0.3s;
+        text-align: right;
+        font-size: 15px;
+    }
+
+        .pay-card.pay-active {
+            border-color: #007bff;
+            background: #f0f8ff;
+        }
+
+    /* بوباب الفيزا */
+    .pay-popup {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 60px;
+        z-index: 9999;
+    }
+
+    .pay-popup-content {
+        background: #fff;
+        padding: 25px;
+        border-radius: 12px;
+        width: 400px;
+        text-align: right;
+    }
+
+        .pay-popup-content h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .pay-popup-content input {
+            width: 100%;
+            margin-bottom: 12px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+    .pay-popup-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .pay-btn {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .pay-btn-confirm {
+        background: #28a745;
+        color: #fff;
+    }
+
+    .pay-btn-close {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .address-input {
+        width: 100%;
+        margin-bottom: 12px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .adreesbasket-address-short p {
+        margin: 5px 0;
+        font-size: 14px;
+    }
+
+    .empty-address {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .adreesbasket-item-img {
+        width: 80px; /* العرض ثابت */
+        height: 80px; /* الطول ثابت */
+        object-fit: cover; /* يقص الصورة لو كبيرة ويحافظ على التناسب */
+        border-radius: 8px; /* اختيارى: يخلي الحواف ناعمة */
+    }
+</style>
+
+<div class="adreesbasket-page">
+    <!-- المنتجات -->
+    <div class="adreesbasket-section adreesbasket-products-box">
+        <h2>@localizer["Yourproducts"]</h2>
+        <div class="adreesbasket-items">
+            
+            @foreach (var basket in Model.Items)
+            {
+                <div class="adreesbasket-item">
+                    <img src="@basket.PictureUrl"
+                         alt="@basket.ProductName" class="adreesbasket-item-img">
+                    <div class="adreesbasket-item-info">
+                        <p class="adreesbasket-item-name">@basket.ProductName</p>
+                        <p class="adreesbasket-item-price">@basket.Price $ </p>
+                    </div>
+                </div>
+               
+            }
+
+        </div>
+        <label>
+            <input type="checkbox" id="fastShipping" />
+            @localizer["Fastshipping"]
+        </label>
+    </div>
+
+    <!-- العنوان -->
+    @* <div class="adreesbasket-section adreesbasket-address-box" onclick="openAdreesbasketPopup()">
+        <h2>العنوان</h2>
+        <div class="adreesbasket-address-short">
+            <p><strong>الاسم:</strong> youssef badr</p>
+            <p><strong>العنوان:</strong> الرياض - حي العليا - شارع الملك فهد</p>
+            <p><strong>الهاتف:</strong> +20-12-23364114</p>
+        </div>
+    </div> *@
+    <!-- العنوان -->
+    <div class="adreesbasket-section adreesbasket-address-box" onclick="openAdreesbasketPopup()">
+        <h2>@localizer["address"]</h2>
+        <div class="adreesbasket-address-short" id="selected-address-container">
+            <!-- هنا سيظهر العنوان المختار أو رسالة إضافة -->
+        </div>
+    </div>
+
+    <!-- ملخص الطلب -->
+    <div class="adreesbasket-section adreesbasket-summary-box">
+        <h2>@localizer["Ordersummary"]</h2>
+
+        <!-- 🟢 المجموع -->
+        <div class="adreesbasket-summary-row">
+            <span>@localizer["subtotal"]</span>
+            <span id="subtotal">0 $</span>
+        </div>
+
+        <!-- 🟢 الخصم -->
+        <div class="adreesbasket-summary-row" id="discount-row" style="display:none;">
+            <span>@localizer["opponent"]</span>
+            <span id="discount">-</span>
+        </div>
+
+        <!-- 🟢 التوصيل -->
+        <div class="adreesbasket-summary-row">
+            <span>@localizer["Delivery"]</span>
+            <span id="shipping-cost">--</span>
+        </div>
+
+        <div class="adreesbasket-summary-row">
+            <small id="shipping-message"></small>
+        </div>
+
+        <!-- 🟢 الإجمالي -->
+        <div class="adreesbasket-summary-row total">
+            <span>@localizer["total"]</span>
+            <span id="total">0 $</span>
+        </div>
+    </div>
+
+    <div class="adreesbasket-section adreesbasket-payment-box">
+        <h2>@localizer["ChooseThePaymentMethod"]:</h2>
+        <div class="pay-options-vertical">
+            <div id="pay-cashCard" class="pay-card">💵 @localizer["cash"]</div>
+            <div id="pay-visaCard" class="pay-card">
+                💳 @localizer["Visa"]
+                <div id="pay-visaDetails" class="pay-visa-details" style="display:none;">
+                    <div id="card-element">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- زر الدفع النهائي -->
+    <button id="btn-pay" class="adreesbasket-btn adreesbasket-btn-pay">@localizer["Paynow"]</button>
+
+    @* <!-- Popup -->
+    <div id="pay-popup" class="pay-popup">
+        <div class="pay-popup-content">
+            <h3>ادخل بيانات البطاقة</h3>
+            <input type="number" id="pay-cardNumber" placeholder="رقم البطاقة" maxlength="16">
+            <input type="text" id="pay-expiry" placeholder="تاريخ الانتهاء (MM/YY)" maxlength="5">
+            <input type="number" id="pay-cvv" placeholder="CVV" maxlength="3">
+
+            <div class="pay-popup-footer">
+                <button class="pay-btn pay-btn-confirm" id="pay-confirmBtn">تأكيد</button>
+                <button class="pay-btn pay-btn-close" id="pay-closeBtn">إلغاء</button>
+            </div>
+        </div>
+    </div> *@
+</div>
+
+
+
+<!-- البوباب الرئيسي للعنوانين -->
+<!-- POPUP اختيار عنوان -->
+<div id="adreesbasket-popup" class="adreesbasket-popup">
+    <div class="adreesbasket-popup-content" id="adreesbasket-popup-container">
+        <h3> @localizer["Specifythedeliveryaddress"]</h3>
+        <button class="adreesbasket-btn" onclick="openAddAddressPopup()"> @localizer["AddANewAddress"]</button>
+
+        <div id="adreesbasket-address-list"></div>
+
+        <div class="adreesbasket-popup-footer">
+            <button class="adreesbasket-btn" onclick="confirmSelectedAddress()">@localizer["Confirm"]</button>
+            <button class="adreesbasket-btn adreesbasket-btn-cancel" onclick="closeAdreesbasketPopup()">@localizer["cancel"]</button>
+        </div>
+    </div>
+</div>
+
+<!-- POPUP إضافة / تعديل عنوان -->
+<div id="add-address-popup" class="adreesbasket-popup">
+    <div class="adreesbasket-popup-content">
+        <h3 id="add-edit-title">@localizer["AddANewAddress"]</h3>
+
+        <input type="text" id="new-firstName" placeholder="@localizer["firstName"]" class="address-input">
+        <input type="text" id="new-lastName" placeholder=" @localizer["lastName"]" class="address-input">
+        <input type="text" id="new-street" placeholder="@localizer["street"]" class="address-input">
+        <input type="text" id="new-city" placeholder="@localizer["city"]" class="address-input">
+        <input type="text" id="new-country" placeholder="@localizer["country"]" class="address-input">
+        <input type="tel" id="new-phoneNumber" placeholder=" @localizer["phoneNumber"]" class="address-input">
+        <label>
+            <input type="checkbox" id="new-isDefault"> @localizer["isDefault"]
+        </label>
+
+        <div style="text-align:right;margin-top:10px;">
+            <button class="adreesbasket-btn" onclick="saveAddress()">@localizer["save"]</button>
+            <button class="adreesbasket-btn adreesbasket-btn-cancel" onclick="closeAddAddressPopup()">@localizer["cancel"]</button>
+        </div>
+        <input type="hidden" id="new-address-id">
+    </div>
+</div>
+<!-- Address script  -->
+<script>
+    let addresses = [];
+    let selectedAddress = null; // ✅ تعديل: بدل selectedAddressId
+
+    // جلب العناوين
+    async function fetchAddresses() {
+        try {
+            const res = await fetch('/Account/GetAddresses');
+            addresses = await res.json();
+            selectedAddress = addresses.find(a => a.isDefault) || addresses[0] || null; // ✅ تعديل
+            renderSelectedAddress();
+                    // ✅ إشعار سكربت الشحن إن العنوان جاهز
+        if (selectedAddress) {
+            document.dispatchEvent(new Event("addressChanged"));
+        }
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
+    // عرض العنوان المختار
+    function renderSelectedAddress() {
+        const container = document.getElementById("selected-address-container");
+        if(!selectedAddress) { // ✅ تعديل
+            container.innerHTML = `<p style="color:black;">برجاء إضافة عنوان شحن</p>`;
+            return;
+        }
+        container.innerHTML = `
+            <p><strong>${selectedAddress.firstName} ${selectedAddress.lastName}</strong></p>
+            <p>${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.country}</p>
+            <p>${selectedAddress.phoneNumber}</p>
+        `;
+    }
+
+    // عرض قائمة العناوين
+    function renderAddressList() {
+        const listContainer = document.getElementById("adreesbasket-address-list");
+        listContainer.innerHTML = "";
+        addresses.forEach(addr => {
+            const div = document.createElement("div");
+            div.className = "adreesbasket-popup-address-item" + (selectedAddress && addr.id === selectedAddress.id ? " active" : ""); // ✅ تعديل
+            div.dataset.id = addr.id;
+            div.innerHTML = `
+                <div class="adreesbasket-popup-address-header">
+                    ${addr.isDefault ? '<span class="adreesbasket-popup-default">افتراضي</span>' : ''}
+                </div>
+                <p><strong>${addr.firstName} ${addr.lastName}</strong></p>
+                <p>${addr.street}, ${addr.city}, ${addr.country}</p>
+                <p>${addr.phoneNumber}</p>
+                <div class="adreesbasket-popup-actions">
+                       <button class="adreesbasket-popup-link" onclick="editAddress(${addr.id}); event.stopPropagation()">تعديل</button>
+                       <button class="adreesbasket-popup-link delete" onclick="deleteAddress(${addr.id}); event.stopPropagation()">حذف</button>
+                </div>
+            `;
+            div.addEventListener("click", () => {
+                selectedAddress = addr; // ✅ تعديل
+                renderAddressList();
+                renderSelectedAddress(); // ✅ تعديل
+                  // ✅ إشعار سكربت الشحن إن العنوان اتغير
+                  document.dispatchEvent(new Event("addressChanged"));
+            });
+            listContainer.appendChild(div);
+        });
+    }
+
+    // فتح وإغلاق البوباب
+    function openAdreesbasketPopup() {
+        renderAddressList();
+        document.getElementById("adreesbasket-popup").style.display = "flex";
+    }
+    function closeAdreesbasketPopup() {
+        document.getElementById("adreesbasket-popup").style.display = "none";
+    }
+
+    // فتح بوباب إضافة / تعديل
+    function openAddAddressPopup(id = null) {
+        const title = document.getElementById("add-edit-title");
+        document.getElementById("add-address-popup").style.display = "flex";
+
+        const addr = addresses.find(a => a.id === id);
+
+        title.textContent = id ? "تعديل العنوان" : "إضافة عنوان جديد";
+        document.getElementById("new-firstName").value = addr?.firstName || "";
+        document.getElementById("new-lastName").value = addr?.lastName || "";
+        document.getElementById("new-street").value = addr?.street || "";
+        document.getElementById("new-city").value = addr?.city || "";
+        document.getElementById("new-country").value = addr?.country || "";
+        document.getElementById("new-phoneNumber").value = addr?.phoneNumber || "";
+        document.getElementById("new-isDefault").checked = addr?.isDefault || false;
+        document.getElementById("new-address-id").value = addr?.id || "";
+    }
+
+    function closeAddAddressPopup() {
+        document.getElementById("add-address-popup").style.display = "none";
+    }
+
+    // حفظ العنوان (إضافة / تعديل)
+    async function saveAddress() {
+        const id = document.getElementById("new-address-id").value;
+        const payload = {
+            firstName: document.getElementById("new-firstName").value,
+            lastName: document.getElementById("new-lastName").value,
+            street: document.getElementById("new-street").value,
+            city: document.getElementById("new-city").value,
+            country: document.getElementById("new-country").value,
+            phoneNumber: document.getElementById("new-phoneNumber").value,
+            isDefault: document.getElementById("new-isDefault").checked
+        };
+
+        if(!payload.firstName || !payload.lastName || !payload.street || !payload.city || !payload.country || !payload.phoneNumber) {
+            return alert("املأ كل الحقول");
+        }
+
+        const url = id ? `/Account/EditAddress/${id}` : '/Account/AddAddress';
+
+        try {
+            const res = await fetch(url, {
+                method: 'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify(payload)
+            });
+
+            if(!res.ok){
+                const msg = await res.text();
+                return alert(msg);
+            }
+
+            const updatedAddr = await res.json();
+
+            if(id) {
+                const index = addresses.findIndex(a => a.id == id);
+                addresses[index] = updatedAddr;
+            } else {
+                addresses.push(updatedAddr);
+            }
+
+            selectedAddress = updatedAddr; // ✅ تعديل
+            renderAddressList();
+            renderSelectedAddress();
+            closeAddAddressPopup();
+        } catch(err) {
+            console.error(err);
+            alert("حدث خطأ أثناء حفظ العنوان");
+        }
+    }
+
+    // دوال تعديل وحذف
+    function editAddress(id) {
+        openAddAddressPopup(id);
+    }
+
+    async function deleteAddress(id) {
+        if(!confirm("هل أنت متأكد من حذف هذا العنوان؟")) return;
+
+        try {
+            const res = await fetch(`/Account/DeleteAddress/${id}`, { method:'POST' });
+            if(!res.ok) return alert("حدث خطأ أثناء الحذف");
+
+            addresses = addresses.filter(a => a.id !== id);
+            if(selectedAddress && selectedAddress.id === id) selectedAddress = addresses[0] || null; // ✅ تعديل
+
+            renderAddressList();
+            renderSelectedAddress();
+        } catch(err) {
+            console.error(err);
+            alert("حدث خطأ أثناء الحذف");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchAddresses);
+</script>
+<script>
+    let deliveryData = null; // ✅ جعل المتغير عامًا للجميع
+</script>
+<!-- delivery script  -->
+<script>
+    // let deliveryData = null;
+    let lastAddress = null;
+
+    async function getShippingCost() {
+        // نتأكد الأول إن العنوان جاهز
+        if (!selectedAddress || !selectedAddress.country || !selectedAddress.city) {
+            console.log("Address not ready yet, skipping...");
+            return;
+        }
+
+        const type = document.getElementById("fastShipping").checked ? "fast" : "standard";
+        const country = selectedAddress.country;
+        const state = selectedAddress.city;
+
+        const currentAddress = { country, state, type };
+
+        if (lastAddress &&
+            lastAddress.country === currentAddress.country &&
+            lastAddress.city === currentAddress.state &&
+            lastAddress.type === currentAddress.type) {
+            console.log("No address change, skip shipping cost request");
+            return;
+        }
+
+        lastAddress = currentAddress;
+
+        const body = { type, country, state };
+
+        try {
+            const res = await fetch("/Orders/GetDeliveryCost", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+
+            const data = await res.json();
+
+            // لو API بيرجع List زي الكود بتاعك
+            if (Array.isArray(data) && data.length > 0) {
+                deliveryData = {
+                    cost: data[0].cost,
+                    id: data[0].id,
+                    message: data[0].deliveryTime
+                };
+
+                document.getElementById("shipping-cost").innerText = deliveryData.cost + " EGP";
+                document.getElementById("shipping-message").innerText = deliveryData.message;
+
+               
+            }
+                 // ✅ الخطوة الأهم: إطلاق حدث لإخبار السكريبتات الأخرى
+            const event = new Event('shippingDataUpdated');
+            document.dispatchEvent(event);
+            
+
+        } catch (err) {
+            console.error("Error fetching shipping:", err);
+        }
+    }
+
+    // أول ما الصفحة تفتح نحاول نجيب التكلفة (لو العنوان اتحمل)
+    document.addEventListener("DOMContentLoaded", () => {
+        getShippingCost();
+    });
+
+    // لو المستخدم غير نوع الشحن
+    document.getElementById("fastShipping").addEventListener("change", getShippingCost);
+
+    // لو سكربت العناوين غيّر العنوان
+    document.addEventListener("addressChanged", () => {
+        getShippingCost();
+    });
+</script>
+<!-- ملخص الطلب script  -->
+<script>
+    // 🟢 ننزل الـ Model كـ JSON في JavaScript
+    const basket = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+   
+ 
+   
+
+    // // دالة لجلب قيمة الكوبون من API
+    // async function getCouponValue(couponId) {
+    //     if (!couponId) return 0;
+
+    //     try {
+    //         const res = await fetch(`/api/coupons/${couponId}`);
+    //         if (!res.ok) return 0;
+
+    //         const coupon = await res.json();
+    //         return coupon.value || 0;
+    //     } catch (err) {
+    //         console.error("Error fetching coupon:", err);
+    //         return 0;
+    //     }
+    // }
+
+    // دالة تحديث ملخص الطلب
+    async function updateBasketSummary() {
+        try {
+            // 🟢 subtotal (Price × Quantity)
+            let subtotal = 0;
+            basket.Items.forEach(item => {
+                subtotal += item.Price * item.Quantity;
+            });
+
+            // 🟢 shipping (من API التوصيل)
+            const shippingCost = deliveryData ? deliveryData.cost : 0;
+            // 🟢 discount (من الكوبون)
+            let discountValue = 0;
+            if (basket.discountId) {
+                discountValue = await getCouponValue(basket.discountId);
+                if (discountValue > 0) {
+                    document.querySelector("#discount-row").style.display = "flex";
+                    document.querySelector("#discount").innerText = "-" + discountValue.toFixed(2) + " $";
+                } else {
+                    document.querySelector("#discount-row").style.display = "none";
+                }
+            } else {
+                document.querySelector("#discount-row").style.display = "none";
+            }
+              
+            // 🟢 total (المجموع + التوصيل - الخصم)
+            const total = subtotal + shippingCost - discountValue;
+
+            // 🟢 عرض البيانات
+            document.querySelector("#subtotal").innerText = subtotal.toFixed(2) + " $";
+            document.querySelector("#shipping-cost").innerText = shippingCost.toFixed(2) + " $";
+            document.querySelector("#total").innerText = total.toFixed(2) + " $";
+
+        } catch (err) {
+            console.error("Error updating basket summary:", err);
+        }
+    }
+    // ✅ الخطوة الأهم: الاستماع للحدث
+                 document.addEventListener("shippingDataUpdated", updateBasketSummary);
+    // ✅ شغّل الفنكشن أول ما الصفحة تفتح
+    document.addEventListener("DOMContentLoaded", updateBasketSummary);
+</script>
+<input type="hidden" id="selected-address-json" />
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const basket = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+    async function updateBasketSummary() {
+        try {
+            let subtotal = 0;
+            basket.Items.forEach(item => {
+                subtotal += item.Price * item.Quantity;
+            });
+            const shippingCost = deliveryData ? deliveryData.cost : 0;
+            let discountValue = 0;
+            if (basket.discountId) {
+                discountValue = await getCouponValue(basket.discountId);
+                if (discountValue > 0) {
+                    document.querySelector("#discount-row").style.display = "flex";
+                    document.querySelector("#discount").innerText = "-" + discountValue.toFixed(2) + " $";
+                } else {
+                    document.querySelector("#discount-row").style.display = "none";
+                }
+            } else {
+                document.querySelector("#discount-row").style.display = "none";
+            }
+            const total = subtotal + shippingCost - discountValue;
+            document.querySelector("#subtotal").innerText = subtotal.toFixed(2) + " $";
+            document.querySelector("#shipping-cost").innerText = shippingCost.toFixed(2) + " $";
+            document.querySelector("#total").innerText = total.toFixed(2) + " $";
+        } catch (err) {
+            console.error("Error updating basket summary:", err);
+        }
+    }
+    document.addEventListener("shippingDataUpdated", updateBasketSummary);
+    document.addEventListener("DOMContentLoaded", updateBasketSummary);
+</script>
+
+<input type="hidden" id="selected-address-json" />
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    // ✅ 1. تهيئة Stripe و Stripe Elements مرة واحدة عند تحميل الصفحة
+    const stripe = Stripe("pk_test_51S55hgL9NbunxkO4Ve8kaTrNSvK5m70q63YaKvAPRMd56pstysgQuVEydjKtILjnGmX35UArknrem2d9sWuQYV2h00tbzjnBHD");
+    window.basketId = "@Model.Id";
+    const elements = stripe.elements();
+       const cardElement = elements.create('card', {
+        hidePostalCode: true
+    });
+
+    // ✅ 2. متغيرات وعناصر DOM
+    let selectedPaymentMethod = "Cash";
+    let deliveryMethodId = 1;
+    const payCashCard = document.getElementById("pay-cashCard");
+    const payVisaCard = document.getElementById("pay-visaCard");
+    const payBtn = document.getElementById("btn-pay");
+    const visaDetailsDiv = document.getElementById("pay-visaDetails"); // العنصر الذي سيتم إظهاره وإخفاؤه
+
+    // ✅ 3. ربط حقل البطاقة بعنصر HTML مرة واحدة فقط
+    // هذا السطر مهم جداً، يجب أن يتم تنفيذه مرة واحدة فقط!
+    cardElement.mount('#card-element');
+
+    // ✅ 4. تعديل منطق اختيار طريقة الدفع
+    function clearActivePaymentMethods() {
+        // إزالة الكلاس النشط من كل طرق الدفع
+        [payCashCard, payVisaCard].forEach(c => c.classList.remove("pay-active"));
+        // إخفاء حقل البطاقة
+        visaDetailsDiv.style.display = 'none';
+    }
+
+    payCashCard.addEventListener("click", () => {
+        clearActivePaymentMethods();
+        payCashCard.classList.add("pay-active");
+        selectedPaymentMethod = "Cash";
+    });
+
+    payVisaCard.addEventListener("click", () => {
+        clearActivePaymentMethods();
+        payVisaCard.classList.add("pay-active");
+        selectedPaymentMethod = "Visa";
+        // إظهار حقل البطاقة المخفي
+        visaDetailsDiv.style.display = 'block';
+    });
+
+    // 5. المنطق الرئيسي لزر "ادفع الآن"
+    payBtn.addEventListener("click", async () => {
+        if (!selectedAddress) {
+            alert("يرجى اختيار عنوان الشحن أولاً.");
+            return;
+        }
+
+        if (selectedPaymentMethod === "Visa") {
+            try {
+                // الخطوة الأولى: نطلب ClientSecret من الواجهة الخلفية
+                   // ✅ هنا نمرر الـ basketId مباشرة في الـ URL
+        const url = `/payments/CreateOrUpdatePaymentIntent?basketId=${window.basketId}`;
+    const res = await fetch(url, {
+        method: 'POST'
+        // لا حاجة لـ Headers أو Body هنا
+    });
+
+                if (!res.ok) throw new Error("حدث خطأ في إنشاء عملية الدفع.");
+                const data = await res.json();
+                const clientSecret = data.clientSecret;
+
+                // الخطوة الثانية: نستخدم ClientSecret لتأكيد الدفع مع Stripe مباشرة
+                const paymentResult = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: {
+                        card: cardElement
+                    }
+                });
+
+                if (paymentResult.error) {
+                    alert("حدث خطأ أثناء الدفع: " + paymentResult.error.message);
+                    return;
+                }
+
+                if (paymentResult.paymentIntent.status === "succeeded") {
+                    // الخطوة الثالثة: بعد تأكيد الدفع، نبلغ الواجهة الخلفية لإنشاء الأوردر
+                    await createOrder("Card", paymentResult.paymentIntent.id);
+                    alert("تم الدفع بنجاح والأوردر تم إنشاؤه!");
+                }
+            } catch (err) {
+                console.error(err);
+                alert(err.message || "حدث خطأ غير متوقع أثناء الدفع");
+            }
+        } else if (selectedPaymentMethod === "Cash") {
+            try {
+                await createOrder("Cash", null);
+                alert("تم إنشاء الأوردر بنجاح! الدفع عند الاستلام.");
+            } catch (err) {
+                console.error(err);
+                alert(err.message);
+            }
+        }
+    });
+
+    // 6. دالة إنشاء الأوردر
+    async function createOrder(paymentMethod, paymentIntentId = null) {
+        try {
+            const payload = {
+                BasketId: window.basketId,
+                DeliveryCostId: deliveryData.id,
+                ShippingAddress: {
+                    Id: selectedAddress.id,
+                    FirstName: selectedAddress.firstName,
+                    LastName: selectedAddress.lastName,
+                    Country: selectedAddress.country,
+                    City: selectedAddress.city,
+                    Street: selectedAddress.street,
+                    PhoneNumber: selectedAddress.phoneNumber || ""
+                },
+                PaymentMethod: paymentMethod === "Cash" ? 0 : 1,
+                PaymentIntentId: paymentIntentId
+            };
+            const res = await fetch('/Orders/CreateOrder', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) throw new Error("حدث خطأ أثناء إنشاء الأوردر");
+            const order = await res.json();
+            window.location.href = `/Orders/OrderDetails/${order.id}`;
+        } catch (err) {
+            console.error(err);
+            alert(err.message);
+        }
+    }
+</script>
+@* <script>
+    document.getElementById("btn-payNow").addEventListener("click", async function() {
+        const selectedPaymentCard = document.querySelector(".pay-card.pay-active");
+        if(!selectedPaymentCard) return alert("اختر وسيلة الدفع!");
+
+        const basketId = "@Model.Id"; // ⚡️ basketId من الـ Model
+        const addressId = selectedAddressId; // ⚡️ العنوان المختار
+        if(!addressId) return alert("اختر عنواناً قبل الدفع!");
+
+        // === START: كاش ===
+        if(selectedPaymentCard.id === "pay-cashCard") {
+            await createOrder("Cash", basketId, addressId);
+            return;
+        }
+        // === END: كاش ===
+
+        // === START: فيزا ===
+        if(selectedPaymentCard.id === "pay-visaCard") {
+            // عرض popup بيانات الفيزا إذا لم يتم إدخالها بعد
+            const number = document.getElementById("pay-cardNumber").value;
+            const expiry = document.getElementById("pay-expiry").value;
+            const cvv = document.getElementById("pay-cvv").value;
+
+            if(!number || !expiry || !cvv) {
+                // فتح popup للفيزا
+                document.getElementById("pay-popup").style.display = "flex";
+                return alert("أدخل بيانات البطاقة أولاً!");
+            }
+
+            // إنشاء/تحديث PaymentIntent
+            try {
+                const piRes = await fetch(`/Payment/CreateOrUpdatePaymentIntent/${basketId}`, {
+                    method: "POST"
+                });
+                if(!piRes.ok) return alert("حدث خطأ أثناء إنشاء PaymentIntent");
+                const basket = await piRes.json();
+                const clientSecret = basket.paymentIntentClientSecret; // ⚡️ marker: clientSecret من الـ API
+
+                // إنشاء الأوردر بعد الـ PaymentIntent
+                await createOrder("Card", basketId, addressId);
+                alert("تم إنشاء الأوردر بنجاح. الدفع بالفيزا جاهز للتأكيد!");
+            } catch(err) {
+                console.error(err);
+                alert("حدث خطأ أثناء معالجة الدفع بالفيزا");
+            }
+        }
+        // === END: فيزا ===
+    });
+
+    // === START: دالة CreateOrder عامة ===
+    async function createOrder(paymentMethod, basketId, addressId) {
+        const orderPayload = {
+            BasketId: basketId,
+            DeliveryMethodId: 1, // مثال: يمكن تعويضه بقيمة حقيقية
+            PaymentMethod: paymentMethod,
+            ShippingAddress: { id: addressId }
+        };
+
+        try {
+            const res = await fetch('/Order/Create', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderPayload)
+            });
+
+            if(!res.ok) {
+                const msg = await res.text();
+                return alert(msg || "حدث خطأ أثناء إنشاء الأوردر");
+            }
+
+            const order = await res.json();
+            console.log("Order Created:", order);
+            window.location.href = `/Order/OrderDetails?id=${order.id}`;
+        } catch(err) {
+            console.error(err);
+            alert("حدث خطأ أثناء إنشاء الأوردر");
+        }
+    }
+    // === END: دالة CreateOrder عامة ===
+</script> *@
+
+@* <script>
+    let addresses = [];
+    let selectedAddressId = null;
+
+    async function fetchAddresses() {
+        try {
+            const res = await fetch('/Account/GetAddresses'); // API
+            addresses = await res.json();
+            selectedAddressId = addresses.find(a => a.isDefault)?.id || (addresses[0] && addresses[0].id) || null;
+            renderSelectedAddress();
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
+    function renderSelectedAddress() {
+        const container = document.getElementById("selected-address-container");
+       if(!addresses || addresses.length === 0 || selectedAddressId === null) {
+            container.innerHTML = `<p style="color:black;">برجاء إضافة عنوان شحن</p>`;
+            return;
+        }
+        const addr = addresses.find(a => a.id === selectedAddressId);
+        if(addr){
+            container.innerHTML = `
+                <p><strong>${addr.firstName} ${addr.lastName}</strong></p>
+                <p>${addr.street}, ${addr.city}, ${addr.country}</p>
+                <p>${addr.phoneNumber}</p>
+            `;
+        }
+    }
+
+    function renderAddressList() {
+        const listContainer = document.getElementById("adreesbasket-address-list");
+        listContainer.innerHTML = "";
+        addresses.forEach(addr => {
+            const div = document.createElement("div");
+            div.className = "adreesbasket-popup-address-item" + (addr.id === selectedAddressId ? " active" : "");
+            div.dataset.id = addr.id;
+            div.innerHTML = `
+                <div class="adreesbasket-popup-address-header">
+                    ${addr.isDefault ? '<span class="adreesbasket-popup-default">افتراضي</span>' : ''}
+                </div>
+                <p><strong>${addr.firstName} ${addr.lastName}</strong></p>
+                <p>${addr.street}, ${addr.city}, ${addr.country}</p>
+                 <p>${addr.phoneNumber}</p>
+                <div class="adreesbasket-popup-actions">
+                    <button class="adreesbasket-popup-link" onclick="editAddress(${addr.id})">تعديل</button>
+                    <button class="adreesbasket-popup-link delete" onclick="deleteAddress(${addr.id})">حذف</button>
+                </div>
+            `;
+            div.addEventListener("click", () => {
+                selectedAddressId = addr.id;
+                renderAddressList();
+            });
+            listContainer.appendChild(div);
+        });
+    }
+
+    function openAdreesbasketPopup() {
+        renderAddressList();
+        document.getElementById("adreesbasket-popup").style.display = "flex";
+    }
+    function closeAdreesbasketPopup() {
+        document.getElementById("adreesbasket-popup").style.display = "none";
+    }
+
+    function openAddAddressPopup() {
+        document.getElementById("add-address-popup").style.display = "flex";
+        // تفريغ الحقول
+        document.getElementById("new-firstName").value = "";
+        document.getElementById("new-lastName").value = "";
+        document.getElementById("new-street").value = "";
+        document.getElementById("new-city").value = "";
+        document.getElementById("new-country").value = "";
+        document.getElementById("new-phoneNumber").value = "";
+
+        document.getElementById("new-isDefault").checked = false;
+    }
+    function closeAddAddressPopup() {
+        document.getElementById("add-address-popup").style.display = "none";
+    }
+
+    async function saveNewAddress() {
+        const firstName = document.getElementById("new-firstName").value;
+        const lastName = document.getElementById("new-lastName").value;
+        const street = document.getElementById("new-street").value;
+        const city = document.getElementById("new-city").value;
+        const phoneNumber = document.getElementById("new-phoneNumber").value;
+        const country = document.getElementById("new-country").value;
+
+        const isDefault = document.getElementById("new-isDefault").checked;
+
+        if(!firstName || !lastName || !street || !city || !country || !phoneNumber) return alert("املأ كل الحقول");
+
+        try{
+            const res = await fetch('/Account/AddAddress', {
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({firstName,lastName,street,city,country,isDefault,phoneNumber})
+            });
+            const newAddr = await res.json();
+            addresses.push(newAddr);
+            selectedAddressId = newAddr.id;
+            renderAddressList();
+            renderSelectedAddress();
+            closeAddAddressPopup();
+        } catch(err){
+            console.error(err);
+            alert("حدث خطأ أثناء الإضافة");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchAddresses);
+</script> *@
+@* <script>
+    const payCashCard = document.getElementById("pay-cashCard");
+    const payVisaCard = document.getElementById("pay-visaCard");
+    const payPopup = document.getElementById("pay-popup");
+    const payConfirmBtn = document.getElementById("pay-confirmBtn");
+    const payCloseBtn = document.getElementById("pay-closeBtn");
+    const payVisaDetails = document.getElementById("pay-visaDetails");
+
+    // مسح التحديد من الكروت
+    function payClearActive() {
+      [payCashCard, payVisaCard].forEach(c => c.classList.remove("pay-active"));
+    }
+
+    // كاش
+    payCashCard.addEventListener("click", () => {
+      payClearActive();
+      payCashCard.classList.add("pay-active");
+      payVisaDetails.style.display = "none"; // اخفاء بيانات الفيزا لو اختار كاش
+    });
+
+    // فيزا
+    payVisaCard.addEventListener("click", () => {
+      payClearActive();
+      payVisaCard.classList.add("pay-active");
+      payPopup.style.display = "flex"; // فتح البوباب
+    });
+
+    // تأكيد بيانات الفيزا
+    payConfirmBtn.addEventListener("click", function () {
+      const number = document.getElementById("pay-cardNumber").value;
+      const expiry = document.getElementById("pay-expiry").value;
+      const cvv = document.getElementById("pay-cvv").value;
+
+      if (number && expiry && cvv) {
+        // إظهار آخر 4 أرقام بس
+        const maskedNumber = "**** **** **** " + number.slice(-4);
+
+        payVisaDetails.style.display = "block";
+        payVisaDetails.innerHTML = `
+          <strong>بيانات البطاقة:</strong><br>
+          الرقم: ${maskedNumber}<br>
+          الانتهاء: ${expiry}<br>
+          CVV: ${cvv}
+        `;
+        payPopup.style.display = "none";
+      } else {
+        alert("من فضلك ادخل كل البيانات!");
+      }
+    });
+
+    // إغلاق البوباب
+    payCloseBtn.addEventListener("click", function () {
+      payPopup.style.display = "none";
+      payClearActive();
+    });
+</script> *@
+@* <!-- البوباب -->
+<div class="adreesbasket-section adreesbasket-address-box" onclick="openAdreesbasketPopup()">
+    <h2>العنوان</h2>
+    <div class="adreesbasket-address-short" id="selected-address-container">
+        <!-- هنا سيظهر العنوان المختار أو رسالة إضافة -->
+    </div>
+</div> *@

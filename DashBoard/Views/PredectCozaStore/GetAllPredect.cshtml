@@ -1,0 +1,123 @@
+﻿@model Pagination<productDisplayViewModel>
+
+@{
+    ViewData["Title"] = "GetAllPredect";
+}
+
+
+
+<h2 class="mt-4"> Product</h2>
+<br />
+<div class="demo-inline-spacing">
+    <a asp-action="CreatCategrey" asp-controller="CozaMaster" class="custom-button">+ Create a New Category</a>
+    
+    <a asp-action="CreatSubCategrey" asp-controller="SubCategrey" class="custom-button">+ Create a New SubCategory</a>
+
+   
+
+</div>
+
+
+
+
+<div class="card">
+    <h5 class="card-header"> Product Table</h5>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Picture/الصورة</th>
+                    <th>Name</th>
+                    <th>description</th>
+                    <th>BasePrice</th>
+                    <th>IsActive</th>
+                    <th>SubCategoryName</th>
+                    <th>Category</th>
+
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+
+
+                @foreach (var user in Model.Data)
+                {
+                    <tr>
+
+                        <td>
+                            <a asp-action="GetAllProductImages" asp-route-id="@user.id" asp-controller="ProductImage" target="_blank">
+                                <img src="@user?.FirstPicture" alt="Product Image" style="width: 60px; height: 50px; cursor: pointer;" />
+                            </a>
+                        </td>
+                        <td>@user?.Name</td>
+                        <td>@user?.description</td>
+                        <td>@user?.BasePrice</td>
+                        <td>@user?.IsActive</td>
+                        <td>@user?.SubCategoryName</td>
+
+
+
+
+                        <td class="action-icons">
+
+
+                            <div class="d-flex gap-2">
+
+                                <a asp-action="ViewProductDetails"
+                                   asp-controller="PredectCozaStore"
+                                   asp-route-id="@user.id"
+                                   class="badge btn-primary  d-flex justify-content-center align-items-center btn btn-icon  btn-sm"
+                                   title="View Details">
+                                    <i class="bx bx-show"></i>
+                                </a>
+                                <a asp-action="EditPredect"
+                                   asp-controller="PredectCozaStore"
+                                   asp-route-id="@user.id"
+                                   class="badge btn-warning d-flex justify-content-center align-items-center btn btn-icon  btn-sm"
+                                   title="Edit">
+                                    <i class="bx bx-edit"></i>
+                                </a>
+
+                                
+                                <a asp-action="DeleteCategrey"
+                                   asp-controller="PredectCozaStore"
+                                   asp-route-id="@user?.id"
+                                   class="badge  d-flex btn-danger d-flex justify-content-center align-items-center btn btn-icon  btn-sm"
+                                   title="Delete">
+                                    <i class="tf-icons bx bx-trash"></i>
+                                </a>
+
+                            </div>
+                            @* <a asp-action="ViewProductDetails" asp-controller="PredectCozaStore" asp-route-id="@user?.id" class="badge rounded-pill btn-info">  <i class="fas fa-eye" title="View Details"></i>  info</a>
+
+                            <a asp-action="EditPredect" asp-controller="PredectCozaStore" asp-route-id="@user.id" class="badge rounded-pill btn-warning">Edit</a>
+
+                            <a asp-action="DeleteCategrey" asp-controller="PredectCozaStore" asp-route-id="@user?.id" class="badge rounded-pill btn-danger"  class="btn rounded-pill btn-danger" >Delete</a> *@
+
+
+
+
+                        </td>
+                    </tr>
+                }
+
+
+
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+<!-- Pagination Controls -->
+<div class="d-flex justify-content-center mt-3">
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @for (int i = 1; i <= Math.Ceiling((decimal)Model.Count / Model.PageSize); i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                    <a class="page-link" asp-action="GetAllPredect" asp-route-PageIndex="@i">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>

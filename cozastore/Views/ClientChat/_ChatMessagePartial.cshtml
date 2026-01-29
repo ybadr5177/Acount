@@ -1,0 +1,54 @@
+﻿@using AccountDAL.Eentiti.SignalR
+@model Message // تأكد من المسار الصحيح لـ Message
+
+@{
+    // يجب تمرير هذه القيمة من الـ Controller/View الرئيسي
+    var currentUserId = ViewData["CurrentUserId"] as string;
+
+    // تحديد التنسيق بناءً على المرسل
+    bool isSender = Model.SenderId == currentUserId;
+    string messageAlignment = isSender ? "ms-auto" : "me-auto";
+    string messageBackground = isSender ? "bg-primary text-white" : "bg-light";
+    string textColor = isSender ? "text-white" : "text-dark";
+    string smallTextColor = isSender ? "text-white-50" : "text-muted";
+}
+
+<div class="d-flex mb-3 @messageAlignment" style="max-width: 80%;">
+    <div class="card @messageBackground border-0 shadow-sm" style="border-radius: 1rem;">
+
+        <div class="card-body p-2">
+
+            @if (Model.IsFile && !string.IsNullOrEmpty(Model.FilePath))
+            {
+                var fileName = System.IO.Path.GetFileName(Model.FilePath); ;
+
+                <div class="d-flex flex-column mb-1">
+                    @if (Model.FilePath.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                                    Model.FilePath.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <a href="@Model.FilePath" target="_blank">
+                            <img src="@Model.FilePath" alt="ملف مرفق" class="img-fluid rounded mb-1" style="max-height: 150px; cursor: pointer;" />
+                        </a>
+                    }
+                    <a href="@Model.FilePath" target="_blank" class="text-decoration-none @textColor fw-bold">
+                        <i class="fas fa-file-download me-1"></i> @fileName
+                    </a>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Content))
+            {
+                <p class="card-text mb-0">@Model.Content</p>
+            }
+
+        </div>
+
+        <div class="card-footer p-1 border-0" style="background: transparent;">
+            <small class="float-end @smallTextColor" style="font-size: 0.7rem;">
+                @Model.Timestamp.ToString("hh:mm tt")
+            </small>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>

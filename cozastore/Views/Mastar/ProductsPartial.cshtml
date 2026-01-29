@@ -1,0 +1,147 @@
+
+
+@inject IViewLocalizer localizer
+@{
+    var isRTL = CultureInfo.CurrentCulture.Name.StartsWith("ar");
+}
+@* @model ProductPageViewModel *@
+@model List<ProductDisplayViewModel>
+     
+
+
+<div id="productsContainer" class="row isotope-grid">
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+            <!-- Block2 -->
+            <a asp-action="DetailsProduct" asp-controller="Mastar" asp-route-Id="@item.Id" class="block2">
+                <div class="block2-pic  hov-img0 ">
+                    <div id="carousel-@item.Id" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            @if (item.Picture != null && item.Picture.Any())
+                            {
+                                int index = 0;
+                                foreach (var img in item.Picture)
+                                {
+                                    <div class="carousel-item  @(index == 0 ? "active" : "")">
+                                        <img src="@img" onerror="this.src='/images/product-05.jpg';" alt="IMG-PRODUCT">
+                                    </div>
+                                    index++;
+                                }
+                            }
+                            else
+                            {
+                                <div class="carousel-item active">
+                                    <img src="@item.Picture" class="d-block w-100" alt="IMG-PRODUCT">
+                                </div>
+                            }
+                        </div>
+
+                        @if (item.Picture != null && item.Picture.Count > 1)
+                        {
+                            <!-- أزرار التنقل -->
+                            <button class="carousel-control-prev stop-link" type="button" data-bs-target="#carousel-@item.Id" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next stop-link" type="button" data-bs-target="#carousel-@item.Id" data-bs-slide="next">
+                                <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        }
+                    </div>
+
+                    <a asp-action="DetailsProduct" asp-controller="Mastar" asp-route-Id="@item.Id" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+                        @localizer["QuickView"]
+                    </a>
+                </div>
+
+                <div class="block2-txt flex-w flex-t p-t-14">
+                    <div class="block2-txt-child1 flex-col-l ">
+                        <a asp-action="DetailsProduct" asp-controller="Mastar" asp-route-Id="@item.Id" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                            @item.Address
+                        </a>
+
+                        <!-- ✅ السعر الأساسي مع الخصم -->
+                        @if (item.BaseDiscountPrice < item.Price)
+                        {
+                            <span class="stext-105 cl3 fw-bold text-success" id="sizePrice-@item.Id">
+                                @item.BaseDiscountPrice $
+                            </span>
+                            <span style="text-decoration: line-through; color: red; margin-left:5px;" id="discountPrice-@item.Id">
+                                @item.Price $
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="stext-105 cl3 fw-bold" id="sizePrice-@item.Id">
+                                @item.Price $
+                            </span>
+                            <span id="discountPrice-@item.Id" style="display:none;"></span>
+                        }
+
+                        <div class="block2-txt-child1 flex-col-l ">
+                            <div class="product-options">
+                                <!-- ✅ اختيار المقاس -->
+                                <div class="p-t-10">
+                                    <select class="form-control sizeSelect" data-product-id="@item.Id" id="sizeSelect-@item.Id" style="max-width:140px;">
+                                        <option value="" data-price="@item.Price" data-discount="@item.BaseDiscountPrice">
+                                            Size
+                                        </option>
+                                        @if (item.ProductSize != null)
+                                        {
+                                            foreach (var size in item.ProductSize)
+                                            {
+                                                <option value="@size.Id" data-price="@size.Price" data-discount="@size.DiscountPrice" class="CartItemDesktop_quantitySelect__LKf23">
+                                                    @size.SizeLabel
+                                                </option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                                <!-- ✅ الكمية -->
+                                <div class="p-t-10">
+                                    <div class="counter-container">
+                                        <button class="counter-button minus" data-product-id="@item.Id">-</button>
+                                        <input type="number" class="counter-input" value="1" min="1" id="counterInput-@item.Id" data-product-id="@item.Id">
+                                        <button class="counter-button plus" data-product-id="@item.Id">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+
+                    <div class="block2-txt-child2 flex-r p-t-3">
+                        <a href="javascript:void(0)"
+                           class="btn-addwish-b2 dis-block pos-relative js-addwish-b2"
+                           data-productid="@item.Id">
+
+                            <img class="icon-heart1 dis-block trans-04"
+                                 src="images/icons/icon-heart-01.png"
+                                 alt="ICON">
+
+                            <img class="icon-heart2 dis-block trans-04 ab-t-l"
+                                 src="images/icons/icon-heart-02.png"
+                                 alt="ICON">
+                        </a>
+                        <button class="btn-add-to-cart" asp-action="AddItem" asp-controller="Basket" type="button" data-product-id="@item.Id">
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+
+
+  
+  
+</div>
+
+
+

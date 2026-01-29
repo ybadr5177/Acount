@@ -1,0 +1,60 @@
+﻿@model IEnumerable<ProductImagesViewModel>
+@{
+    ViewData["Title"] = "GetAllProductImages";
+}
+
+<div class="card">
+    <h5 class="card-header"> Product Table</h5>
+
+    <a asp-action="AddProductImages" asp-controller="ProductImage" class="custom-button">+ Add a New Image</a>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Picture/الصورة</th>
+                    <th>Category</th>
+
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+
+
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@user.ImageUrl" alt="Product Image" style="width: 60px; height: 50px; cursor: pointer;" />
+                        </td>
+                       
+
+
+                        <td class="action-icons">
+
+
+                            <a asp-action="DeletProductImages"
+                               asp-controller="ProductImage"
+                               asp-route-id="@user?.Id"
+                               class="badge  d-flex btn-danger d-flex justify-content-center align-items-center btn btn-icon  btn-sm"
+                               title="Delete">
+                                <i class="tf-icons bx bx-trash"></i>
+                            </a>
+                           
+
+                           @*  <a asp-action="DeletProductImages" asp-controller="ProductImage" asp-route-id="@user?.Id" class="badge rounded-pill btn-danger"  class="btn rounded-pill btn-danger" >Delete</a> *@
+
+
+
+
+                        </td>
+                    </tr>
+                }
+
+
+
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+

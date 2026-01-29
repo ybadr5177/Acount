@@ -1,0 +1,68 @@
+﻿
+@model IEnumerable<Message>// تأكد من المسار الصحيح لـ Message
+
+
+<div id="messagesListContent">
+    @if (Model != null)
+    {
+        @* قراءة الـ Admin ID الذي تم تمريره من Controller عبر ViewData للمقارنة *@
+        var currentAdminId = ViewData["AdminId"] as string;
+
+        @* الحلقة التكرارية لعرض كل رسالة في السجل *@
+        @foreach (var message in Model.OrderBy(m => m.Timestamp))
+        {
+            // تحديد التنسيق بناءً على المرسل الحالي
+            bool isSender = message.SenderId == currentAdminId;
+            string messageAlignment = isSender ? "ms-auto" : "me-auto"; // ms-auto = يمين, me-auto = يسار
+            string messageBackground = isSender ? "bg-primary text-white" : "bg-light";
+            string textColor = isSender ? "text-white" : "text-dark";
+            string smallTextColor = isSender ? "text-white-50" : "text-muted";
+
+            <div class="d-flex mb-3 @messageAlignment" style="max-width: 80%;">
+                <div class="card @messageBackground border-0 shadow-sm" style="border-radius: 1rem;">
+
+                    <div class="card-body p-2">
+
+                        @* منطق عرض الملفات والصور *@
+                        @if (message.IsFile && !string.IsNullOrEmpty(message.FilePath))
+                        {
+                            var fileName = System.IO.Path.GetFileName(message.FilePath);
+
+                            <div class="d-flex flex-column mb-1">
+                                @if (message.FilePath.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                                                    message.FilePath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                                                    message.FilePath.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <a href="@message.FilePath" target="_blank">
+                                        <img src="@message.FilePath" alt="ملف مرفق" class="img-fluid rounded mb-1" style="max-height: 150px; cursor: pointer;" />
+                                    </a>
+                                }
+                                <a href="@message.FilePath" target="_blank" class="text-decoration-none @textColor fw-bold">
+                                    <i class="fas fa-file-download me-1"></i> @fileName
+                                </a>
+                            </div>
+                        }
+
+                        @* منطق عرض محتوى الرسالة النصية *@
+                        @if (!string.IsNullOrEmpty(message.Content))
+                        {
+                            <p class="card-text mb-0">@message.Content</p>
+                        }
+
+                    </div>
+
+                    <div class="card-footer p-1 border-0" style="background: transparent;">
+                        <small class="float-end @smallTextColor" style="font-size: 0.7rem;">
+                            @message.Timestamp.ToString("hh:mm tt")
+                        </small>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        @* رسالة في حالة عدم وجود سجل *@
+        <p class="text-center text-muted mt-5">لا توجد رسائل سابقة في هذه المحادثة.</p>
+    }
+</div>

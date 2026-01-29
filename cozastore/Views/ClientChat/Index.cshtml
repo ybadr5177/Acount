@@ -1,0 +1,48 @@
+﻿@model ClientChatViewModel
+@{
+    ViewData["Title"] = "الدعم المباشر";
+    //  تأكد من أن المسار صحيح لملف Layout
+    Layout = "~/Views/Shared/_LayoutTheOtherPage.cshtml";
+}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">محادثة الدعم المباشر</h5>
+        </div>
+
+        <div id="messagesList" class="p-3" style="height: 400px; overflow-y: auto; background-color: #f8f9fa;">
+            @if (Model.Messages != null)
+            {
+                @foreach (var message in Model.Messages)
+                {
+                    @await Html.PartialAsync("_ChatMessagePartial",
+                    message,
+                        new ViewDataDictionary(ViewData) { ["CurrentUserId"] = Model.SenderId })
+                        }
+            }
+        </div>
+
+        @*  هذا هو المكان الصحيح والوحيد لعناصر الإرسال! *@
+        <div class="card-footer p-3 border-top">
+
+            @*  الحقول المخفية للـ JavaScript (يجب وضعها هنا) *@
+            <input type="hidden" id="senderId" value="@Model.SenderId" />
+            <input type="hidden" id="conversationId" value="@Model.ConversationId" />
+
+            <div class="input-group">
+                <input type="text" id="messageInput" class="form-control" placeholder="اكتب رسالتك..." />
+
+                @*  حقل الملفات (الذي قمت بإضافته لحل خطأ null) *@
+                <input type="file" id="fileInput" class="form-control" style="max-width: 150px;" />
+
+                <button class="btn btn-success" id="sendMessageButton">إرسال</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="~/js/shared/sharedchatutils.js"></script>
+    <script src="~/js/clientchat.js"defer></script>
+}

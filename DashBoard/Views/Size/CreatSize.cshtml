@@ -1,0 +1,96 @@
+﻿@model DifferentSizeViewModel
+@{
+    ViewData["Title"] = "CreatSize";
+}
+
+<h2 class="mt-4">Creat Size</h2>
+
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <div class="row">
+        <div class="card mb-4">
+            <div class="card-body">
+               
+                <form asp-controller="Size" asp-action="CreatSize" method="post" enctype="multipart/form-data" class="custom-form">
+                   @*  <label class="form-label" for="Type">Choose the type</label>
+                    <select class="form-select" id="Type" name="Type">
+                        <option value="">-- Choose --</option>
+                        <option value="Number">Number</option>
+                        <option value="Dimension">Dimensions</option>
+                        <option value="Text">label</option>
+                    </select>
+
+                    <!-- المنطقة الديناميكية حسب النوع -->
+                    <div id="dynamic-area"></div> *@
+
+                    <label class="form-label" for="Type">Choose the type</label>
+                    <select class="form-select" id="SizeNameId" name="SizeNameId" required>
+                        <option value="">-- Choose --</option>
+                    </select>
+
+                    <!-- input ثابت -->
+                    <div class="mt-3">
+                        <label class="form-label" for="Value">Enter Value</label>
+                        <input class="form-control" type="text" id="Label" name="Label" placeholder="Enter value" required />
+                    </div>
+
+                    <br />
+                    <button class="btn btn-success d-grid w-100" type="submit">submit </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        
+         document.addEventListener("DOMContentLoaded", function () {
+              console.log("Script loaded ✅");
+        var select = document.getElementById("SizeNameId");
+        var input = document.getElementById("Label");
+        console.log("Script loaded ✅");
+        // تحميل الأنواع من API
+        fetch('/Size/GetAllNameSize')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(function (item) {
+                    var option = document.createElement("option");
+                    option.value = item.value; // ده اللي هيتبعت للـ Controller
+                    option.text = item.text;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error loading types:', error));
+          });
+
+        // document.getElementById("Type").addEventListener("change", function () {
+        //     var selected = this.value;
+        //     var container = document.getElementById("dynamic-area");
+        //     container.innerHTML = "";
+
+        //     if (selected === "Number") {
+        //         container.innerHTML = `
+        //                         <label class="form-label">Enter the Number</label>
+        //                          <input type="Number" min="0" step="1" id="Label" name="Label" />
+        //                     `;
+        //     } else if (selected === "Dimension") {
+        //         container.innerHTML = `
+        //                         <label class="form-label">Depth</label>
+        //                                                         <input type="Number" min="0"  id="Depth" name="Dimensions.Depth" />
+        //                         <label class="form-label">العرض</label>
+        //                                         <input class="form-control" type="Number" min="0"  id="Width"  name="Dimensions.Width" />
+        //                         <label class="form-label">الارتفاع</label>
+        //                                         <input class="form-control" type="Number" min="0"  id="Height" name="Dimensions.Height" />
+        //                     `;
+        //     } else if (selected === "Text") {
+        //         container.innerHTML = `
+        //                                 <label class="form-label">Enter the Label</label>
+        //                                  <input class="form-control" type="text" id="Label" name="Label" />
+        //                             `;
+
+        //     }
+        // });
+    </script>
+}
+

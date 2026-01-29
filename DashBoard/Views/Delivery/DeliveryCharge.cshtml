@@ -1,0 +1,53 @@
+﻿@model DeliveryCostViewModel
+@{
+    ViewData["Title"] = "DeliveryCharge";
+}
+
+<h2 class="mt-4">Delivery Cost</h2>
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <div class="row">
+        @*  <div class="col-md-6">
+           
+            
+        </div> *@
+        <div class="card mb-4">
+            <div class="card-body">
+
+                <form class="custom-form" asp-action="DeliveryCharge" asp-controller="Delivery" method="post" enctype="multipart/form-data">
+                    <label for="Name" class="form-label">State</label>
+                    <input type="text" class="form-control" id="Name_EN" name="Name_EN" placeholder="Type the Name here">
+
+                    <label for="Name" class="form-label">المحافظة</label>
+                    <input type="text" class="form-control" id="Name_Ar" name="Name_Ar" placeholder="Type the Name here">
+
+                    <label for="Cost" class="form-label"> Message of the Expected Number of days</label>
+                    <input type="text" class="form-control" id="DeliveryTime" name="DeliveryTime" placeholder="Delivery cost">
+
+                    <label for="Cost" class="form-label">Delivery cost</label>
+                    <input type="number" class="form-control" id="Cost" name="Cost" placeholder="Delivery cost">
+
+                    <div class="form-group">
+                        <label asp-for="ShippingType" class="form-label">Choose Shipping Type</label>
+                        <select asp-for="ShippingType" class="form-control">
+                            <option value="">-- Choose Shipping Type --</option>
+                            <option value="Fast">Fast</option>
+                            <option value="Standard">Standard</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DeliveryCountryId" class="form-label">Choose the main Category</label>
+                        <select asp-for="DeliveryCountryId" class="form-control" asp-items="@(new SelectList(Model.DeliveryCountry, "Id", "Name_EN"))">
+                            <option value="">-- Choose a Category --</option>
+                        </select>
+                        <span asp-validation-for="DeliveryCountryId" class="text-danger"></span>
+                    </div>
+
+                    <br />
+                    <button class="btn btn-success d-grid w-100" type="submit">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

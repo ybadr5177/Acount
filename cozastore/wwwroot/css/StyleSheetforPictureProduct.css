@@ -1,0 +1,10 @@
+﻿.carousel-control-prev,
+.carousel-control-next {
+    display: none !important;
+}
+
+/* لما اعمل hover على الصورة يظهروا */
+.block2-pic:hover .carousel-control-prev,
+.block2-pic:hover .carousel-control-next {
+    display: flex !important;
+}

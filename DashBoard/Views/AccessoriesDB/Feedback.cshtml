@@ -1,0 +1,53 @@
+﻿@model IEnumerable<FeedBackViewModel>
+@{
+    ViewData["Title"] = "Feedback";
+}
+
+
+<div class="card">
+    <h5 class="card-header"> Product Table</h5>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Message</th>
+
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+
+
+                @foreach (var user in Model)
+                {
+                    <tr>
+
+
+                        <td>@user?.Subject</td>
+                        <td>@user?.Message</td>
+
+
+
+
+                        <td class="action-icons">
+
+                            <a asp-action="FeedbackenDelet"
+                               asp-controller="AccessoriesDB"
+                               asp-route-id="@user?.Id"
+                               class="badge  d-flex btn-danger d-flex justify-content-center align-items-center btn btn-icon  btn-sm"
+                               title="Delete">
+                                <i class="tf-icons bx bx-trash"></i>
+                            </a>
+                           @*  <a asp-action="FeedbackenDelet" asp-controller="AccessoriesDB" asp-route-id="@user.Id" class="badge rounded-pill btn-danger"  class="btn rounded-pill btn-danger" >Delete</a> *@
+
+                        </td>
+                    </tr>
+                }
+
+
+
+            </tbody>
+
+        </table>
+    </div>
+</div>

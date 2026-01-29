@@ -1,0 +1,734 @@
+@using System.Globalization
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer localizer
+@{
+    var isRTL = CultureInfo.CurrentCulture.Name.StartsWith("ar");
+}
+@model ProductAndSubCategoryPageViewModel
+@{
+    ViewData["Title"] = "GetProductBySubCategory";
+    Layout = "_LayoutTheOtherPage";
+}
+@* <h2>عرض الفئات (SubCategory Slider)</h2>
+
+<h2 style="text-align:center; margin: 20px 0;">عرض الفئات</h2> *@
+<style>
+    /* Your existing CSS for counter-container and counter-input */
+    /* Your existing CSS for counter-container and counter-input */
+    .counter-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+    }
+
+    .counter-input {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        text-align: center;
+        font-size: 18px;
+        -moz-appearance: textfield;
+    }
+
+        .counter-input::-webkit-outer-spin-button,
+        .counter-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+    /* ✅ الأكواد الجديدة التي تصنع شكل الأقواس */
+    .counter-button {
+        position: relative; /* مهم لضبط موقع الأقواس */
+        background-color: transparent; /* إزالة الخلفية الأصلية للزر */
+        color: black; /* لون علامة الزائد والناقص */
+        border: none;
+        cursor: pointer;
+        font-size: 24px;
+        width: 25px; /* تم تصغير الحجم */
+        height: 40px; /* تم تصغير الحجم */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        line-height: 1;
+        overflow: hidden; /* لمنع ظهور أي جزء زائد من القوس */
+    }
+
+        .counter-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: -1; /* لجعل القوس يظهر خلف النص */
+        }
+
+        .counter-button.minus::before {
+            border-radius: 0 50% 50% 0 / 0 100% 100% 0; /* شكل القوس الأيسر */
+        }
+
+        .counter-button.plus::before {
+            border-radius: 50% 0 0 50% / 100% 0 0 100%; /* شكل القوس الأيمن */
+        }
+
+    /*  /* القلب الفاضي */
+    .js-addwish-b2 .icon-heart1 {
+        display: block;
+    }
+
+    /* القلب المليان */
+    .js-addwish-b2 .icon-heart2 {
+        display: none;
+    }
+
+    /* لما الزر يبقى Active → نخفي الفاضي ونظهر المليان */
+    .js-addwish-b2.active .icon-heart1 {
+        display: none;
+    }
+
+    .js-addwish-b2.active .icon-heart2 {
+        display: block;
+    }
+
+    */
+</style>
+<style>
+    /* Your existing CSS for counter-container and counter-input */
+    /* Your existing CSS for counter-container and counter-input */
+    .counter-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+    }
+
+    .counter-input {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        text-align: center;
+        font-size: 18px;
+        -moz-appearance: textfield;
+    }
+
+        .counter-input::-webkit-outer-spin-button,
+        .counter-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+    /* ✅ الأكواد الجديدة التي تصنع شكل الأقواس */
+    .counter-button {
+        position: relative; /* مهم لضبط موقع الأقواس */
+        background-color: transparent; /* إزالة الخلفية الأصلية للزر */
+        color: black; /* لون علامة الزائد والناقص */
+        border: none;
+        cursor: pointer;
+        font-size: 24px;
+        width: 25px; /* تم تصغير الحجم */
+        height: 40px; /* تم تصغير الحجم */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        line-height: 1;
+        overflow: hidden; /* لمنع ظهور أي جزء زائد من القوس */
+    }
+
+        .counter-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: -1; /* لجعل القوس يظهر خلف النص */
+        }
+
+        .counter-button.minus::before {
+            border-radius: 0 50% 50% 0 / 0 100% 100% 0; /* شكل القوس الأيسر */
+        }
+
+        .counter-button.plus::before {
+            border-radius: 50% 0 0 50% / 100% 0 0 100%; /* شكل القوس الأيمن */
+        }
+
+    /*  /* القلب الفاضي */
+    .js-addwish-b2 .icon-heart1 {
+        display: block;
+    }
+
+    /* القلب المليان */
+    .js-addwish-b2 .icon-heart2 {
+        display: none;
+    }
+
+    /* لما الزر يبقى Active → نخفي الفاضي ونظهر المليان */
+    .js-addwish-b2.active .icon-heart1 {
+        display: none;
+    }
+
+    .js-addwish-b2.active .icon-heart2 {
+        display: block;
+    }
+
+    
+</style>
+<div class="sec-banner bg0 p-t-80 p-b-50">
+    <div class="container">
+        <div class="p-b-10">
+            <h3 class="ltext-103 cl5">
+                SubCategory Overview
+            </h3>
+        </div>
+        <div class="row">
+
+            <!-- Block1 -->
+            @foreach (var item in Model.SubCategories)
+            {
+                <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
+
+
+                    <div class="block1 wrap-pic-w">
+                        <img src=@item.Picture alt="IMG-BANNER">
+
+                        <a asp-controller="Mastar" asp-action="ProductsUsingSubCategory" asp-route-SubCategorysId="@item.Id" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
+                            <div class="block1-txt-child1 flex-col-l">
+                                <span class="block1-name ltext-102 trans-04 p-b-8">
+                                    @item.Name_EN
+                                </span>
+
+                            </div>
+
+                            <div class="block1-txt-child2 p-b-4 trans-05">
+                                <div class="block1-link stext-101 cl0 trans-09">
+                                    Shop Now
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<section class="bg0 p-t-23 p-b-140">
+    <div class="container">
+        <div class="p-b-10">
+            <h3 class="ltext-103 cl5">
+                @localizer["ProductOverview"]
+            </h3>
+        </div>
+
+        <div class="flex-w flex-sb-m p-b-52">
+            <div class="flex-w flex-l-m filter-tope-group m-tb-10">
+                 <a href="#"
+                   data-ajax="true"
+                   data-query=""
+                   class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 @(Model.Filter.SubCategorysId == null ? "how-active1" : "")">
+                    All Products
+                </a>
+                @foreach (var item in Model.SubCategories)
+                {
+                    @*  <a asp-action="Index"
+                       asp-controller="Mastar"
+                       asp-route-CategoryId="@item.Id"
+                       class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5  @(Model.Filter.CategoryId == item.Id ? "how-active1" : "")">
+                        @item.Name_EN
+                    </a> *@
+                    <a href="#"
+                       data-ajax="true"
+                       data-query="SubCategorysId=@item.Id"
+                       class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 @(Model.Filter.SubCategorysId == item.Id ? "how-active1" : "")">
+                        @item.Name_EN
+                    </a>
+                }
+            </div>
+
+            <div class="flex-w flex-c-m m-tb-10">
+                <div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
+                    <i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
+                    <i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
+                    @localizer["Filter"]
+                </div>
+
+                <div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
+                    <i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
+                    <i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
+                    @localizer["search"]
+                </div>
+            </div>
+
+            <!-- Search product -->
+            <div id="searchDiv" class="w-full">
+                <div class="dis-none panel-search w-full p-t-10 p-b-15">
+                    <div class="bor8 dis-flex p-l-15">
+                        <button id="searchButton" class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
+                            <i class="zmdi zmdi-search"></i>
+                        </button>
+                        <input id="searchInput" class="mtext-107 cl2 size-114 plh2 p-r-15"
+                               type="text"
+                               name="Search"
+                               value="@Model.Filter.Search"
+                               placeholder="Search">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter -->
+            <div class="dis-none panel-filter w-full p-t-10">
+                <div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
+                    <div class="filter-col1 p-r-15 p-b-27">
+                        <div class="mtext-102 cl2 p-b-15">
+                            Sort By
+                        </div>
+                        <ul>
+                            <li class="p-b-6">
+                                <a href="#"
+                                   data-ajax="true"
+                                   data-query="SortBy=PriceAsc"
+                                   class="filter-link stext-106 trans-04 @(Model.Filter.Sort == "PriceAsc" ? "filter-link-active" : "")">
+                                    Price: Low to High
+                                </a>
+                            </li>
+                            <li class="p-b-6">
+                                <a href="#"
+                                   data-ajax="true"
+                                   data-query="SortBy=PriceDesc"
+                                   class="filter-link stext-106 trans-04 @(Model.Filter.Sort == "PriceDesc" ? "filter-link-active" : "")">
+                                    Price: High to Low
+                                </a>
+                            </li>
+                        </ul>
+                        @* <ul>
+                            <li class="p-b-6">
+                                <a href="#" class="filter-link stext-106 trans-04">
+                                    Default
+                                </a>
+                            </li>
+
+                            <li class="p-b-6">
+                                <a href="#" class="filter-link stext-106 trans-04">
+                                    Popularity
+                                </a>
+                            </li>
+
+                            <li class="p-b-6">
+                                <a href="#" class="filter-link stext-106 trans-04">
+                                    Average rating
+                                </a>
+                            </li>
+
+                            <li class="p-b-6">
+                                <a href="#" class="filter-link stext-106 trans-04 filter-link-active">
+                                    Newness
+                                </a>
+                            </li>
+
+                            <li class="p-b-6">
+                                <a href="#" class="filter-link stext-106 trans-04">
+                                    Price: Low to High
+                                </a>
+                            </li>
+
+                            <li class="p-b-6">
+                                <a href="#" class="filter-link stext-106 trans-04">
+                                    Price: High to Low
+                                </a>
+                            </li>
+                        </ul> *@
+                    </div>
+
+                    @*  <div class="filter-col2 p-r-15 p-b-27">
+                        <div class="mtext-102 cl2 p-b-15">
+                            Price
+                        </div>
+
+                        <ul>
+                            <li class="p-b-6">
+                                <a href="#"
+                                   data-ajax="true"
+                                   data-query="?SortBy=PriceAsc"
+                                   class="filter-link stext-106 trans-04 @(Model.Filter.SortBy == "PriceAsc" ? "filter-link-active" : "")">
+                                    Price: Low to High
+                                </a>
+                            </li>
+                            <li class="p-b-6">
+                                <a href="#"
+                                   data-ajax="true"
+                                   data-query="?SortBy=PriceDesc"
+                                   class="filter-link stext-106 trans-04 @(Model.Filter.SortBy == "PriceDesc" ? "filter-link-active" : "")">
+                                    Price: High to Low
+                                </a>
+                            </li>
+                        </ul>
+                    </div> *@
+                </div>
+            </div>
+        </div>
+
+       
+           
+
+       @*  <div class="row isotope-grid">
+            @foreach (var item in Model.Products)
+            {
+                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+                    <!-- Block2 -->
+                    <a asp-action="DetailsProduct" asp-controller="Mastar" asp-route-Id="@item.Id" class="block2">
+                        <div class="block2-pic hov-img0">
+                            <img src=@item.Picture alt="IMG-PRODUCT">
+
+                            <a asp-action="DetailsProduct" asp-controller="Mastar" asp-route-Id="@item.Id" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+                                Quick View
+                            </a>
+                        </div>
+
+                        <div class="block2-txt flex-w flex-t p-t-14">
+                            <div class="block2-txt-child1 flex-col-l ">
+                                <a asp-action="DetailsProduct" asp-controller="Mastar" asp-route-Id="@item.Id" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                    @item.Address
+                                </a>
+
+                                <span class="stext-105 cl3">
+                                    $@item.Price
+                                </span>
+                            </div>
+
+                            <div class="block2-txt-child2 flex-r p-t-3">
+                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
+                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
+                                </a>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+      
+        </div> *@
+        @Html.Partial("ProductsPartial", Model.Products)
+    </div>
+</section>
+
+@section Scripts {
+    <!--الاسكربت الخاص بل منتجات-->
+    <!-- jQuery (لازم ييجي قبل أي حاجة) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- االخاص با البحث واالفلتره -->
+    <script>
+        // helper: يبني كويري سترنج من قيمة البحث فقط
+        function toQueryString(value) {
+            if (!value) return "";
+            return `?Search=${encodeURIComponent(value)}`;
+        }
+
+        // دالة تحميل المنتجات عبر Ajax
+        async function loadProducts(qs) {
+            const url = '/Mastar/ProductsPartial' + (qs || '');
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '<div class="text-center w-100 p-5">Loading...</div>';
+
+            try {
+                const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                const html = await res.text();
+                container.innerHTML = html;
+                initProductEvents();
+                  setTimeout(() => {
+                 if ($('.isotope-grid').length > 0) {
+                $('.isotope-grid').isotope({
+                itemSelector: '.isotope-item',
+                layoutMode: 'fitRows'
+                 });
+                 }
+                 $('.carousel').carousel();
+                }, 400);
+                const indexUrl = '/Mastar/Index' + (qs || '');
+                window.history.pushState({}, '', indexUrl);
+            } catch (error) {
+                console.error('Error loading products:', error);
+                container.innerHTML = '<div class="text-center w-100 p-5">Failed to load products. Please try again later.</div>';
+            }
+        }
+
+        // ... (بقية الدوال الأخرى) ...
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // ... (كود wireCarouselStopLink) ...
+
+            // ✅ التعديل الرئيسي هنا: كود فلترة الكاتيجوري والفرز
+            // هذه الدالة الآن تتعامل مع كل الفلاتر
+            function handleFilterClick(e) {
+                e.preventDefault();
+
+                const currentQs = window.location.search;
+                const urlParams = new URLSearchParams(currentQs);
+                const newParam = this.getAttribute('data-query');
+
+                if (newParam) {
+                    // فلتر عادي (مثلاً، categoryId=1 أو SortBy=PriceAsc)
+                    const [key, value] = newParam.split('=');
+                    urlParams.set(key, value);
+                } else {
+                    // "All Products" (إعادة ضبط جميع الفلاتر)
+                    urlParams.delete('SubCategorysId');
+                    urlParams.delete('SortBy');
+                    urlParams.delete('Search');
+                }
+
+                // تحديث حالة الأكتيف
+                document.querySelectorAll('[data-ajax="true"]').forEach(a => a.classList.remove('how-active1', 'filter-link-active'));
+                this.classList.add('how-active1', 'filter-link-active');
+
+                loadProducts('?' + urlParams.toString());
+            }
+
+            // إرفاق الحدث للكاتيجوري
+            document.querySelectorAll('.filter-tope-group a[data-ajax="true"]').forEach(a => {
+                a.addEventListener('click', handleFilterClick);
+            });
+
+            // إرفاق الحدث للفرز
+            document.querySelectorAll('.panel-filter ul a[data-ajax="true"]').forEach(a => {
+                a.addEventListener('click', handleFilterClick);
+            });
+
+            // ✅ كود البحث (AJAX) - تم تعديله لدمج الفلاتر بشكل صحيح
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
+
+            if (searchInput && searchButton) {
+                function handleSearch(e) {
+                    e.preventDefault();
+                    const value = searchInput.value;
+                    const currentQs = window.location.search;
+                    const urlParams = new URLSearchParams(currentQs);
+
+                    if (value) {
+                        urlParams.set('Search', value);
+                    } else {
+                        urlParams.delete('Search');
+                    }
+
+                    loadProducts('?' + urlParams.toString());
+                }
+
+                searchButton.addEventListener('click', handleSearch);
+                searchInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        handleSearch(e);
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        // دالة لتهيئة أحداث المنتجات
+        function initProductEvents() {
+            // ✅ الأحداث الخاصة بتغيير المقاس
+            $(document).off('change', '.sizeSelect').on('change', '.sizeSelect', function () {
+                console.log("🟡 تم تغيير المقاس");
+
+                var id = $(this).data('product-id');
+                var selectedOption = $(this).find('option:selected');
+                var price = selectedOption.data("price");
+                var discount = selectedOption.data("discount");
+
+                console.log({ id, price, discount });
+
+                var priceElement = $('#sizePrice-' + id);
+                var discountElement = $('#discountPrice-' + id);
+
+                if (discount && discount < price) {
+                    priceElement.text(discount + " $").removeClass("text-success").addClass("text-success");
+                    discountElement.text(price + " $").show();
+                } else {
+                    priceElement.text(price + " $").removeClass("text-success");
+                    discountElement.hide();
+                }
+            });
+
+            // ✅ كود العداد المحدث
+            $('.counter-container').each(function() {
+                const counterContainer = $(this);
+                const minusButton = counterContainer.find('.minus');
+                const plusButton = counterContainer.find('.plus');
+                const counterInput = counterContainer.find('.counter-input');
+
+                minusButton.off('click').on('click', (e) => {
+                    e.preventDefault();
+                    let value = parseInt(counterInput.val());
+                    if (value > 1) {
+                        counterInput.val(value - 1);
+                    }
+                });
+
+                plusButton.off('click').on('click', (e) => {
+                    e.preventDefault();
+                    let value = parseInt(counterInput.val());
+                    counterInput.val(value + 1);
+                });
+            });
+
+           // ✅ تعديل زر السلة للحصول على البيانات المحدثة
+            $(document).off('click', '.btn-add-to-cart').on('click', '.btn-add-to-cart', function (e) {
+                e.preventDefault();
+
+                var productId = $(this).data('product-id');
+                var productContainer = $(this).closest('.block2-txt').closest('.block2-txt').find('.block2-txt-child1');
+
+
+                // ✅ الحصول على الكمية من حقل الإدخال
+
+                var counterInput = $(this).closest('.block2-txt').find('.counter-input');
+                  var qty = counterInput.val();
+
+                // ✅ الحصول على المقاس المحدد
+                var sizeSelect = $('#sizeSelect-' + productId);
+                var selectedSizeId = sizeSelect.val();
+                var selectedOption = sizeSelect.find('option:selected');
+
+                // ✅ الحصول على السعر المناسب (المنتج أو المقاس)
+                var priceElement = $('#sizePrice-' + productId);
+                var priceText = priceElement.text().replace(' $', '').trim();
+                var price = parseFloat(priceText);
+
+                console.log("🛒 البيانات المرسلة:", {
+                    productId: productId,
+                    quantity: qty,
+                    sizeId: selectedSizeId,
+                    price: price
+                });
+
+
+
+                // ✅ إرسال البيانات عبر Ajax
+                $.ajax({
+                    url: '@Url.Action("AddItem", "Basket")',
+                    type: 'POST',
+                    data: {
+                        Id: productId,
+                        Quantity: qty,
+                        SizeId: selectedSizeId,
+                        Price: price
+                    },
+                    success: function (res) {
+                        if (res.success) {
+                            alert("✅ تم إضافة المنتج إلى السلة بنجاح!");
+                        } else {
+                            alert("❌ " + res.message);
+                        }
+                    },
+                    error: function (err) {
+                        alert("❌ حدث خطأ أثناء إضافة المنتج إلى السلة!");
+                        console.error(err);
+                    }
+                });
+            });
+        }
+
+        // استدعاء الدالة عند تحميل الصفحة
+        $(document).ready(function () {
+            initProductEvents();
+        });
+    </script>
+
+    <!--Favorite Script-->
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const buttons = document.querySelectorAll(".js-addwish-b2");
+
+            for (let btn of buttons) {
+                const productId = btn.dataset.productid;
+
+                // ✅ تشيك أول ما الصفحة تفتح
+                try {
+                    const checkRes = await fetch(`/Favorite/IsFavorite?productId=${productId}`);
+                    if (checkRes.status === 200) {
+                        const result = await checkRes.json();
+                        if (result.isFav === true) {
+                            btn.classList.add("active"); // 🔹 يظهر القلب المليان
+                        } else {
+                            btn.classList.remove("active"); // 🔹 يظهر القلب الفاضي
+                        }
+                    }
+                } catch (err) {
+                    console.warn("User not logged in, skip fav check.");
+                }
+
+                // ✅ لما يضغط على القلب
+                btn.addEventListener("click", async (e) => {
+                    e.preventDefault();
+
+                    if (btn.classList.contains("active")) {
+                        // لو موجود → احذف
+                        const res = await fetch(`/Favorite/RemoveFavorite?productId=${productId}`, { method: "POST" });
+                        if (res.status === 401) {
+                            window.location.href = "/Account/Login";
+                            return;
+                        }
+                        btn.classList.remove("active"); // 🔹 يرجّع القلب فاضي
+
+                    } else {
+                        // لو مش موجود → أضف
+                        const res = await fetch(`/Favorite/AddFavorite?productId=${productId}`, { method: "POST" });
+                        if (res.status === 401) {
+                            window.location.href = "/Account/Login";
+                            return;
+                        }
+                        btn.classList.add("active"); // 🔹 يخلي القلب مليان
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script><!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!--///////////////////////////////////////////////////////////////////////////////////////////////-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".stop-link").forEach(btn => {
+                btn.addEventListener("click", function (event) {
+                    event.stopPropagation(); // يمنع اللينك الكبير من الفتح
+                });
+            });
+        });
+    </script>
+
+    <script>
+        // دالة لإظهار/إخفاء القائمة المنسدلة
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function toggleDropdown2() {
+            const dropdown = document.getElementById('userDropdown2');
+            dropdown.classList.toggle('show');
+        }
+
+        // إغلاق القوائم المنسدلة عند النقر خارجها
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropdown-toggle')) {
+                const dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
+}

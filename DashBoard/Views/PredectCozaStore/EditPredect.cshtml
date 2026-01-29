@@ -1,0 +1,94 @@
+﻿@model ProductViewModel
+@{
+    ViewData["Title"] = "EditPredect";
+}
+
+<h2 class="mt-4">Creat Product</h2>
+
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <div class="row">
+        <div class="card mb-4">
+            <div class="card-body">
+
+                <form id="productForm" class="custom-form" enctype="multipart/form-data">
+                    @*  <label class="form-label" for="image">Choose an image</label>
+                    <input class="form-control" type="file" id="PictureName" name="PictureName" multiple accept="image/*"> *@
+
+                    @* <div id="fileInputs">
+                        <input type="file" name="PictureName" multiple>
+                        <label class="form-label" for="image">Choose an image</label>
+                        <input class="form-control" type="file" id="PictureName" name="PictureName" multiple accept="image/*">
+                        <div id="previewContainer"></div>
+                        <button type="button" onclick="addFileInput()">Add More</button>
+                    </div>
+                     *@
+
+
+
+                    <div id="fileInputs">
+                        <label class="form-label" for="image">Choose an image</label>
+                        <input class="form-control" type="file" id="PictureName" name="PictureName" multiple accept="image/*">
+                    </div>
+                    <br />
+                    <button type="button" class="btn rounded-pill btn-success" onclick="addFileInput()">Add more photos+</button>
+
+                    <br />
+
+                    <label class="form-label" for="productName">Product Name in English:</label>
+                    <input class="form-control" type="text" id="Address_En" name="Address_En" required>
+                    <label class="form-label" for="productName">Product Name in Arabic :</label>
+                    <input class="form-control" type="text" id="Address_Ar" name="Address_Ar" required>
+
+
+                    <label class="form-label" for="productDescription">Description in English:</label>
+                    <textarea class="form-control" id="description_En" name="description_En" required></textarea>
+
+                    <label class="form-label" for="productDescription"> الوصف بل بلغة العربية:</label>
+                    <textarea class="form-control" id="description_Ar" name="description_Ar" required></textarea>
+
+                    <label class="form-label" for="BasePrice">  BasePrice :</label>
+                    <input class="form-control" type="number" id="BasePrice" name="BasePrice" required>
+
+                    <label class="form-label" for="productName">   BaseDiscountPrice :</label>
+                    <input class="form-control" type="number" id="BaseDiscountPrice" name="BaseDiscountPrice">
+
+                    @*   <label class="form-label" for="Discountrate"> Discountrate :</label>
+                    <input class="form-control" type="number" id="Discountrate" name="Discountrate"> *@
+                    <!-- الاسليدر الخاصة بعرض subCategory -->
+                    <div class="form-group">
+
+                        <div class="form-group mt-3">
+                            <label class="form-label">Select relation type:</label><br />
+
+                            <input type="radio" id="chooseCategory" name="selectionType" class="form-check-input" value="category">
+                            <label for="chooseCategory">Category</label>
+
+                            <input type="radio" id="chooseSubCategory" name="selectionType" value="subcategory" class="form-check-input">
+                            <label for="chooseSubCategory">SubCategory</label>
+                        </div>
+
+                        <div id="categoryContainer" class="form-group mt-2" style="display:none;">
+                            <label class="form-label" for="CategoryId">Select category</label>
+                            <select id="CategoryId" name="CategoryId" class="form-select" asp-items="@(new SelectList(Model.Categorys, "id", "Name_EN"))">
+                                <option value="">-- Choose Category --</option>
+                            </select>
+                        </div>
+
+                        <div id="subcategoryContainer" class="form-group mt-2" style="display:none;">
+                            <label class="form-label" asp-for="SubCategoryId">Select  subcategory </label>
+                            <select id="SubCategoryId" name="SubCategoryId" class="form-select" asp-items="@(new SelectList(Model.SubCategorys, "Id", "Name_EN"))">
+                                <option value="">-- Choose  --</option>
+                            </select>
+                            <span asp-validation-for="SubCategoryId" class="text-danger"></span>
+                        </div>
+
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+

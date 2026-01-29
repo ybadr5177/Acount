@@ -1,0 +1,157 @@
+
+@model IReadOnlyList<OrderToReturnViewModel>
+@{
+    ViewData["Title"] = "GetOrdersForUser";
+    Layout = "_LayoutTheOtherPage";
+}
+@inject IViewLocalizer localizer
+@{
+    var isRTL = CultureInfo.CurrentCulture.Name.StartsWith("ar");
+}
+<style>
+    /* الاستايل الأساسي للأوردر */
+    .OrderWrapper {
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    /* بيانات الأوردر */
+    .OrderHeader {
+        background: #f7f7f7;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #e0e0e0;
+    }
+
+        .OrderHeader h2 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .OrderHeader h3 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .OrderHeader h4 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .OrderHeader div {
+            font-size: 14px;
+            color: #555;
+            margin: 2px 0;
+        }
+
+    /* المنتجات داخل الأوردر */
+    .OrderItems {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* المنتج */
+    .CartItemDesktop_mainWrapper__10l20 {
+        display: flex;
+        align-items: center;
+        border: 1px solid #e5e5e5;
+        border-radius: 8px;
+        padding: 10px;
+        gap: 15px;
+        background-color: #fafafa;
+    }
+
+    /* صورة المنتج */
+    .CartItemDesktop_imageCtr__EJxU_ img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+    }
+
+    /* تفاصيل المنتج */
+    .CartItemDesktop_contentCtr__Bti9o {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .CartItemDesktop_title__mQPWc {
+        font-size: 16px;
+        font-weight: bold;
+        color: #222;
+    }
+
+    .CartItemDesktop_priceWrapper__coPP0 {
+        font-size: 14px;
+        color: #27ae60;
+    }
+
+    .CartItemDesktop_discountCtr__ipmDn {
+        font-size: 13px;
+        color: #888;
+    }
+</style>
+
+
+<!-- ✅ عرض الأوردرات -->
+<div class="CartDesktop_column__4I16X CartDesktop_columnOne__QFO4H">
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="OrderWrapper" style="text-align:center; padding:30px; color:#777; font-size:16px;">
+           @localizer["TheOrderMessageIsEmpty"]
+        </div>
+    }
+    @foreach (var order in Model)
+    {
+        <!-- أوردر -->
+        <div class="OrderWrapper">
+            <br />
+            <h4>@localizer["Myorders"]</h4>
+            <br />
+            <!-- بيانات الأوردر -->
+            <div class="OrderHeader">
+
+                <h3> @localizer["Recipient'sname"]: @order.ShipToAddress.FirstName  @order.ShipToAddress.LastName</h3>
+                <h2> @localizer["Requestnumber"]: @order.Id</h2>
+                <div><b>@localizer["date"]:</b> @order.OrderDate.ToString("yyyy-MM-dd")</div>
+                <div><b>@localizer["condition"]:</b> @order.Status</div>
+                <div><b> @localizer["Deliverycost"]:</b> @order.DeliveryCost</div>
+                <div><b>@localizer["EstimatedDeliveryDate"]:</b> @order.DeliveryTime</div>
+                <div><b>@localizer["Total"]:</b> @order.SubTotal</div>
+                <div><b>@localizer["Deliveryaddress"]:</b> @string.Join(", ", new[] { order?.ShipToAddress.Street, order?.ShipToAddress.City, order?.ShipToAddress.Country }) </div>
+            </div>
+
+            <!-- المنتجات -->
+            <div class="OrderItems">
+                @foreach (var item in order.Items)
+                {
+                    <div class="CartItemDesktop_mainWrapper__10l20">
+                       @*  <!-- صورة المنتج -->
+                        <div class="CartItemDesktop_imageCtr__EJxU_">
+                            <img src="@item.PictureUrl" alt="@item.ProductName">
+                        </div> *@
+
+                        <!-- تفاصيل المنتج -->
+                        <div class="CartItemDesktop_contentCtr__Bti9o">
+                            <h3 class="CartItemDesktop_title__mQPWc">@item.ProductName</h3>
+                            <div class="CartItemDesktop_priceWrapper__coPP0">@localizer["Price"]: @item.Price</div>
+                            <div class="CartItemDesktop_discountCtr__ipmDn"><b>@localizer["Quantity"]:</b> @item.Quantity</div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    }
+</div>

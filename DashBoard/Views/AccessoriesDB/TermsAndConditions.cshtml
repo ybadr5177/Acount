@@ -1,0 +1,53 @@
+﻿@using DashBoard.ViewModel.Accessories
+@model TermsAndConditions
+@{
+    ViewData["Title"] = "TermsAndConditions";
+}
+
+<h1>TermsAndConditions</h1>
+<br/>
+
+<form asp-action="Edit" asp-controller="AccessoriesDB" method="post">
+   @*  @Html.AntiForgeryToken() *@
+
+    <div class="form-group">
+        <label for="editor">Text</label>
+        <textarea id="editor" name="Content">@Model?.Content</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
+</form>
+
+<!-- تحميل CKEditor -->
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
+<!-- تهيئة CKEditor -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        ClassicEditor
+            .create(document.querySelector('#editor'))
+            .catch(error => console.error(error));
+    });
+</script>
+
+@* <form asp-action="Edit" asp-controller="AccessoriesDB" method="post">
+    <div class="form-group">
+        <label for="editor">النص</label>
+        <textarea id="editor" name="Content" class="form-control">@Model?.Content</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
+</form>
+
+<script src="~/ckeditor5-builder-46.0.1/ckeditor5/ckeditor5.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const editorElement = document.querySelector('#editor');
+        if (editorElement) {
+            ClassicEditor
+                .create(editorElement)
+                .catch(error => console.error(error));
+        }
+    });
+</script> *@

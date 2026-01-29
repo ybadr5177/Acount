@@ -1,0 +1,114 @@
+{
+  "ProductOverview": "نظرة عامة على المنتج",
+  "home": "الرئسية",
+  "ContactUS": "تواصل معا",
+  "Feedback": "اقتراحات وشكاوى",
+  "Info": "معلومات اضافية",
+  "TermsAndConditions": "الشروط والاحكام",
+  "CategoryOverview": "الفئة الرئيسية",
+  "ShopNow": "تسوق الآن",
+  "MyAccount": "حسابي",
+  "HelpAndFAQs": "المساعدة والدعم",
+  "Logout": "تسجيل الخروج",
+  "Login": "تسجيل الدخول",
+  "Register": "إنشاء حساب",
+  "Profile": "الملف الشخصي",
+  "search": "بحث",
+  "Filter": "التصفية",
+  "QuickView": "التفصيل",
+  "Myorders": "طلبياتي",
+  "Favorites": "المفضلات",
+  "Recipient'sname": "اسم المستلم",
+  "Requestnumber": "رقم طلب",
+  "date": "التاريخ",
+  "condition": "الحالة",
+  "Deliverycost": "تكلفة التوصيل",
+  "EstimatedDeliveryDate": "تاريخ التوصيل المتوقع",
+  "Total": "الإجمالي",
+  "Deliveryaddress": "عنوان الطلب",
+  "Price": "السعر",
+  "Quantity": "الكمية",
+  "TheOrderMessageIsEmpty": "لا يوجد أوردرات حالياً",
+  "Soldby": " يباع بواسطة",
+  "delete": "حذف",
+  "Ordersummary": "ملخص الطلب",
+  "Enterthecode": "ادخل الكود",
+  "Apply": "تطبيق",
+  "Subtotal": "المجموع الفرعي",
+  "coupon": "كوبون",
+  "total": "المجموع",
+  "Paymentpage": "صفحة الدفع",
+  "Fastshipping": "شحن سريع",
+  "Yourproducts": "منتجاتك",
+  "address": "العنوان",
+  "opponent": "الخصم",
+  "Delivery": "التوصيل",
+  "ChooseThePaymentMethod": "اختر وسيلة الدفع",
+  "Visa": "فيزا",
+  "Paynow": "ادفع الآن",
+  "Specifythedeliveryaddress": "حدد عنوان التسليم",
+  "AddANewAddress": "إضافة عنوان جديد",
+  "Confirm ": "تأكيد",
+  "cancel ": "إلغاء",
+  "firstName": "الاسم الأول",
+  "lastName": "اسم العائلة",
+  "street": "الشارع",
+  "city": "المدينة",
+  "country": "البلد",
+  "phoneNumber": "رقم الهاتف",
+  "isDefault": "اجعل هذا العنوان افتراضي",
+  "save": "حفظ",
+  "Sorry": "عذراً",
+  "ThisProductIsNoLongerAvailableOrHasBeenRemovedFromTheStore": "هذا المنتج لم يعد يتوفر الآن أو تم سحبه من المتجر.",
+  "YouCanGoBackTo": "يمكنك العودة إلى",
+  "ToBrowseMoreProducts": "لتصفح المزيد من المنتجات"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

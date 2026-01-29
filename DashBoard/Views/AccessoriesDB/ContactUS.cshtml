@@ -1,0 +1,48 @@
+﻿@model ContactUSViewModel
+@{
+    ViewData["Title"] = "ContactUS";
+}
+
+<h2 class="mt-4">Creat Categrey</h2>
+<!-- Content -->
+
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <div class="row">
+        @*  <div class="col-md-6">
+           
+            
+        </div> *@
+        <div class="card mb-4">
+            <div class="card-body">
+
+                <form class="custom-form" asp-action="ContactUS" asp-controller="AccessoriesDB" method="post" enctype="multipart/form-data">
+                    <label for="Name" class="form-label"> Address </label>
+                    <input type="text" class="form-control" id="Address" name="Address" placeholder="Type the Address here">
+
+                    <label for="Name" class="form-label">facebook </label>
+                    <input type="text" class="form-control" id="facebook" name="facebook" placeholder="Type the facebook here">
+
+                    <label for="Name" class="form-label"> instagram </label>
+                    <input type="text" class="form-control" id="instagram" name="instagram" placeholder="Type the instagram here">
+
+                    <label for="Name" class="form-label">x</label>
+                    <input type="text" class="form-control" id="x" name="x" placeholder="Type the x here">
+
+                    <label for="Name" class="form-label">  whatsapp  </label>
+                    <input type="text" class="form-control" id="whatsapp" name="whatsapp" placeholder="Type the whatsapp here">
+
+                    <label for="Name" class="form-label"> phonenumber </label>
+                    <input type="text" class="form-control" id="phonenumber" name="phonenumber" placeholder="Type the phonenumber here">
+
+                    <label for="Name" class="form-label"> email </label>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="Type the email here">
+
+                    <br />
+                    <button class="btn btn-success d-grid w-100" type="submit">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,30 @@
+﻿@model DeliveryCountryViewModel
+@{
+    ViewData["Title"] = "DeliveryCountry";
+}
+<h2 class="mt-4">Delivery Country</h2>
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <div class="row">
+        @*  <div class="col-md-6">
+           
+            
+        </div> *@
+        <div class="card mb-4">
+            <div class="card-body">
+
+                <form class="custom-form" asp-action="DeliveryCountry" asp-controller="Delivery" method="post" enctype="multipart/form-data">
+                    <label for="Name" class="form-label"> Add your Delivery Country</label>
+                    <input type="text" class="form-control" id="Name_EN" name="Name_EN" placeholder="Type the Name here">
+
+                    <label for="Name" class="form-label">اضافة البلد الخاصة بل شحن</label>
+                    <input type="text" class="form-control" id="Name_Ar" name="Name_Ar" placeholder="Type the Name here">
+
+                    <br />
+                    <button class="btn btn-success d-grid w-100" type="submit">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

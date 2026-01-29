@@ -1,0 +1,359 @@
+﻿@model cozastore.ViewModel.ProfileForMapViewModel
+@{
+    Layout = null;
+}
+
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        min-height: 100vh;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* خلفية الموقع */
+    .website-background {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        border: none;
+        pointer-events: none;
+    }
+
+    /* طبقة تظليل للخلفية لتحسين قراءة النص */
+    .overlay {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 0;
+    }
+
+    /* تنسيقات البروفايل */
+    .profile-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        overflow-y: auto;
+    }
+
+    .profile-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 500px;
+        padding: 30px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        position: relative;
+        margin: 40px 0;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    /* زر الإغلاق */
+    .close-btn {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        font-size: 20px;
+        color: #555;
+    }
+
+        .close-btn:hover {
+            background: #ff4757;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+    .profile-picture {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid #fff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .profile-name {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .profile-username {
+        color: #6c757d;
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
+
+    .profile-info {
+        text-align: right;
+        margin-bottom: 25px;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+    .info-label {
+        font-weight: 600;
+        color: #555;
+    }
+
+    .info-value {
+        color: #333;
+    }
+
+    .quick-links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .quick-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #555;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .quick-link:hover {
+            background: #6c5ce7;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .quick-link i {
+            margin-left: 8px;
+        }
+
+    .btn-edit {
+        background: #050a41;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+        .btn-edit:hover {
+            background: #5649c9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-edit i {
+            margin-left: 8px;
+        }
+
+    /* محتوى إضافي لمحاكاة التمرير */
+    .additional-content {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #f1f1f1;
+    }
+
+    .content-item {
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        text-align: right;
+    }
+
+    /* تخصيص شريط التمرير */
+    .profile-card::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .profile-card::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .profile-card::-webkit-scrollbar-thumb {
+        background: #6c5ce7;
+        border-radius: 4px;
+    }
+
+    /* تنسيقات للهاتف */
+
+</style>
+    <div class="profile-container">
+        <div class="profile-card">
+            <!-- زر الإغلاق -->
+            <button class="close-btn" onclick="closeProfile()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <!-- صورة البروفايل -->
+            <div>
+                <img src="@Model?.ProfilePicture"
+                     alt="ProfilePicture" class="profile-picture">
+                <h2 class="profile-name">@Model?.FullNames</h2>
+                <p class="profile-username">@Model?.UserName</p>
+            </div>
+
+            <!-- معلومات البروفايل -->
+            <div class="profile-info">
+                <div class="info-item">
+                    <span class="info-label">@Model?.Email</span>
+                    <span class="info-value"> : e-mail</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">@Model?.PhoneNumber</span>
+                    <span class="info-value">: PhoneNumber</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">@Model?.DateOfBirth.ToString("dd-MM-yyyy") </span>
+                    <span class="info-value">: date of birth   </span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">@Model?.Gender</span>
+                    <span class="info-value">: Gender</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">@Model?.Address?.Street - @Model?.Address?.City - @Model?.Address?.Region, @Model?.Address?.Country</span>
+                    <span class="info-value">: address </span>
+                </div>
+            </div>
+
+            <!-- روابط سريعة -->
+            <div class="quick-links">
+            <a href="@Url.Action("GetOrdersForUser", "Orders")" class="quick-link">
+                    <i class="fas fa-shopping-bag"></i> طلباتي
+                </a>
+            <a href="@Url.Action("GetFavorites", "Favorite")" class="quick-link">
+                    <i class="fas fa-heart"></i> المفضلة
+                </a>
+             @*    <a href="#" class="quick-link">
+                    <i class="fas fa-map-marker-alt"></i> العناوين
+                </a>
+                <a href="#" class="quick-link">
+                    <i class="fas fa-credit-card"></i> الدفع
+                </a> *@
+            </div>
+
+            <!-- زر التعديل -->
+            <a asp-action="ViewProfile" asp-controller="Account" class="btn-edit">
+                <i class="fas fa-edit"></i> تعديل الملف الشخصي
+            </a>
+
+         @*    <!-- محتوى إضافي لمحاكاة التمرير -->
+            <div class="additional-content">
+                <h4>نشاطي الأخير</h4>
+                <div class="content-item">
+                    <p>طلب #1234 - 15 سبتمبر 2023</p>
+                    <span>تم التوصيل بنجاح</span>
+                </div>
+                <div class="content-item">
+                    <p>طلب #1233 - 10 سبتمبر 2023</p>
+                    <span>تم التوصيل بنجاح</span>
+                </div>
+                <div class="content-item">
+                    <p>طلب #1232 - 5 سبتمبر 2023</p>
+                    <span>تم التوصيل بنجاح</span>
+                </div>
+                <div class="content-item">
+                    <p>طلب #1231 - 1 سبتمبر 2023</p>
+                    <span>تم التوصيل بنجاح</span>
+                </div>
+                <div class="content-item">
+                    <p>طلب #1230 - 28 أغسطس 2023</p>
+                    <span>تم التوصيل بنجاح</span>
+                </div>
+            </div> *@
+        </div>
+    </div>
+
+    <script>
+        // دالة لإغلاق البروفايل
+        function closeProfile() {
+            document.querySelector('.profile-container').style.display = 'none';
+        }
+
+        // لإظهار البروفايل مرة أخرى (يمكن استدعاؤها من أي مكان)
+        function showProfile() {
+            document.querySelector('.profile-container').style.display = 'flex';
+        }
+
+        // جعل iframe يملأ الخلفية بالكامل
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const iframe = document.querySelector('.website-background');
+        //     const overlay = document.querySelector('.overlay');
+
+        //     // إضافة تأثير التعتيم على الخلفية لتحسين قراءة النص
+        //     overlay.addEventListener('click', function(e) {
+        //         e.preventDefault();
+        //         e.stopPropagation();
+        //     });
+
+        //     // منع التفاعل مع iframe الخلفية
+        //     try {
+        //         iframe.contentWindow.document.body.style.pointerEvents = 'none';
+        //     } catch (e) {
+        //         console.log("لا يمكن الوصول إلى محتوى iframe بسبب سياسة الأمان");
+        //     }
+
+        //     // إظهار البروفايل عند تحميل الصفحة
+        //     showProfile();
+        // });
+    </script>
+@* </body>
+</html> *@

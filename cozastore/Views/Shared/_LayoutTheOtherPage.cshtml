@@ -1,0 +1,613 @@
+@using System.Globalization
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer localizer
+@{
+    var isRTL = CultureInfo.CurrentCulture.Name.StartsWith("ar");
+}
+<!DOCTYPE html>
+
+<html lang="en" dir="@(isRTL ? "RTL" : "LTR")">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="~/images/icons/favicon.png" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/vendor/bootstrap/css/bootstrap.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/fonts/iconic/css/material-design-iconic-font.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/fonts/linearicons-v1.0.0/icon-font.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/vendor/animate/animate.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/vendor/css-hamburgers/hamburgers.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/vendor/animsition/css/animsition.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/vendor/select2/select2.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/vendor/daterangepicker/daterangepicker.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/vendor/slick/slick.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/vendor/MagnificPopup/magnific-popup.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/vendor/perfect-scrollbar/perfect-scrollbar.css">
+    <!--===============================================================================================-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/css/util.css">
+    <link rel="stylesheet" type="text/css" href="~/css/main.css">
+    <link href="~/css/stylecategorysheet.css" rel="stylesheet" />
+    <link href="~/css/stylecategorysheet.css" rel="stylesheet" />
+    <!-- Select2 CSS (اختياري لتحسين شكل القائمة) -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+    <header class="header-v4">
+        <!-- Header desktop -->
+        <div class="container-menu-desktop">
+            <!-- Topbar -->
+            <div class="top-bar">
+                <div class="content-topbar flex-sb-m h-full container">
+                    <div class="left-top-bar">
+                        Free shipping for standard order over $100
+                    </div>
+
+                    <div class="right-top-bar flex-w h-full">
+                        <a asp-action="ContactUS" asp-controller="Accessories" class="flex-c-m trans-04 p-lr-25">
+                            @localizer["HelpAndFAQs"]
+                        </a>
+
+                        @*  <a href="#" class="flex-c-m trans-04 p-lr-25">
+                            @localizer["MyAccount"]
+                        </a> *@
+
+                        @* <a href="#" class="flex-c-m trans-04 p-lr-25">
+                            EN
+                        </a> *@
+
+                        <a href="#" id="langButton" class="flex-c-m trans-04 p-lr-25">Loading...</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wrap-menu-desktop how-shadow1">
+                <nav class="limiter-menu-desktop container">
+
+                    <!-- Logo desktop -->
+                    <a href="#" class="logo">
+                        <img src="~/images/icons/logo-01.png" alt="IMG-LOGO">
+                    </a>
+
+                    <!-- Menu desktop -->
+                    <div class="menu-desktop">
+                        <ul class="main-menu">
+                            <li>
+                                <a asp-controller="Mastar" asp-action="Index">@localizer["home"]</a>
+                                @*<ul class="sub-menu">
+                                <li><a href="index.html">Homepage 1</a></li>
+                                <li><a href="home-02.html">Homepage 2</a></li>
+                                <li><a href="home-03.html">Homepage 3</a></li>
+                                </ul>*@
+                            </li>
+                            <li>
+                                <a asp-action="Feedback" asp-controller="Accessories">@localizer["Feedback"]</a>
+                            </li>
+
+                            <li>
+                                <a style="cursor:auto;">@localizer["Info"]</a>
+                                <ul class="sub-menu">
+                                    <li> <a asp-action="ContactUS" asp-controller="Accessories">@localizer["ContactUS"]</a></li>
+                                    <li> <a asp-action="TermsAndConditions" asp-controller="Accessories">@localizer["TermsAndConditions"] </a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Icon header -->
+                    <div class="wrap-icon-header flex-w flex-r-m">
+                        <div class="user-menu">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <div class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img id="profileImage" alt="User" class="rounded-circle border border-dark" width="40" height="40" />
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                        <!--  الجزا الذي تم تعديلو-->
+                                        <li><a class="dropdown-item" href="javascript:void(0)" id="openProfilePopup" @* class="dropdown-item" href="@Url.Action("Profile", "Account") *@">👤 @localizer["Profile"]</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("GetOrdersForUser","Orders")">📦 @localizer["Myorders"]</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("GetFavorites", "Favorite")">❤️ @localizer["Favorites"]</a></li>
+                                        <li>
+                                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                                <button type="submit" class="dropdown-item">🚪 @localizer["Logout"]</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="dropdown">
+                                    <button @* class="btn dropdown-toggle" *@ class="btn dropdown-toggle d-flex justify-content-center align-items-center rounded-circle border border-dark cl2" style="width:40px;height:40px;" type="button" id="guestDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="zmdi lnr lnr-user"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="guestDropdown">
+                                        <li><a class="dropdown-item" href="@Url.Action("Login", "Account")">🔑 @localizer["Login"]</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Register", "Account")">📝 @localizer["Register"]</a></li>
+                                       
+                                    </ul>
+                                </div>
+                            }
+
+                        </div>
+                        <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+                            <i class="zmdi zmdi-search"></i>
+                        </div>
+
+                        <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="0" id="cartIcon">
+                            <i class="zmdi zmdi-shopping-cart"></i>
+                        </div>
+
+                        <a href="#" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
+                            <i class="zmdi zmdi-favorite-outline"></i>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Header Mobile -->
+        <div class="wrap-header-mobile">
+            <!-- Logo moblie -->
+            <div class="logo-mobile">
+                <a href="index.html"><img src="images/icons/logo-01.png" alt="IMG-LOGO"></a>
+            </div>
+
+            <!-- Icon header -->
+            <div class="wrap-icon-header flex-w flex-r-m m-r-15">
+                <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
+                    <i class="zmdi zmdi-search"></i>
+                </div>
+
+                <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="2">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                </div>
+
+                <a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
+                    <i class="zmdi zmdi-favorite-outline"></i>
+                </a>
+            </div>
+
+            <!-- Button show menu -->
+            <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+            </div>
+        </div>
+
+
+        <!-- Menu Mobile -->
+        <div class="menu-mobile">
+            <ul class="topbar-mobile">
+                <li>
+                    <div class="left-top-bar">
+                        Free shipping for standard order over $100
+                    </div>
+                </li>
+
+                <li>
+                    <div class="right-top-bar flex-w h-full">
+                        <a asp-action="ContactUS" asp-controller="Accessories" class="flex-c-m trans-04 p-lr-25">
+                            @localizer["HelpAndFAQs"]
+                        </a>
+
+                        @*  <a href="#" class="flex-c-m trans-04 p-lr-25">
+                            @localizer["MyAccount"]
+                        </a> *@
+
+                        @* <a href="#" class="flex-c-m trans-04 p-lr-25">
+                            EN
+                        </a> *@
+
+                        <a href="#" id="langButton" class="flex-c-m trans-04 p-lr-25">Loading...</a>
+                    </div>
+                </li>
+            </ul>
+
+            <ul class="main-menu-m">
+                <li>
+                    <a asp-controller="Mastar" asp-action="Index">@localizer["home"]</a>
+                    @*<ul class="sub-menu">
+                                <li><a href="index.html">Homepage 1</a></li>
+                                <li><a href="home-02.html">Homepage 2</a></li>
+                                <li><a href="home-03.html">Homepage 3</a></li>
+                                </ul>*@
+                </li>
+                <li>
+                    <a asp-action="Feedback" asp-controller="Accessories">@localizer["Feedback"]</a>
+                </li>
+
+                <li>
+                    <a style="cursor:auto;">@localizer["Info"]</a>
+                    <ul class="sub-menu">
+                        <li> <a asp-action="ContactUS" asp-controller="Accessories">@localizer["ContactUS"]</a></li>
+                        <li> <a asp-action="TermsAndConditions" asp-controller="Accessories">@localizer["TermsAndConditions"] </a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Modal Search -->
+        <div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
+            <div class="container-search-header">
+                <button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
+                    <img src="~/images/icons/icon-close2.png" alt="CLOSE">
+                </button>
+
+                <form class="wrap-search-header flex-w p-l-15">
+                    <div class="user-menu">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="dropdown">
+                                <button class="btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img id="profileImage" alt="User" class="rounded-circle border border-dark" width="40" height="40" />
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <!--  الجزا الذي تم تعديلو-->
+                                    <li><a class="dropdown-item" href="javascript:void(0)" id="openProfilePopup" @* class="dropdown-item" href="@Url.Action("Profile", "Account") *@">👤 @localizer["Profile"]</a></li>
+                                    <li>
+                                        <form asp-controller="Account" asp-action="Logout" method="post">
+                                            <button type="submit" class="dropdown-item">🚪 @localizer["Logout"]</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="dropdown">
+                                <button class="btn dropdown-toggle" type="button" id="guestDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="@Url.Content("~/images/default-user.png")" alt="Guest" class="user-icon" />
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="guestDropdown">
+                                    <li><a class="dropdown-item" href="@Url.Action("Login", "Account")">🔑 @localizer["Login"]</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Register", "Account")">📝 @localizer["Register"]</a></li>
+                                </ul>
+                            </div>
+                        }
+
+                    </div>
+                    <button class="flex-c-m trans-04">
+                        <i class="zmdi zmdi-search"></i>
+                    </button>
+                    <input class="plh3" type="text" name="search" placeholder="Search...">
+                </form>
+            </div>
+        </div>
+    </header>
+    <main role="main" class="pb-3">
+        <div class="wrap-header-cart js-panel-cart">
+            <div class="s-full js-hide-cart"></div>
+
+            <div class="header-cart flex-col-l p-l-65 p-r-25">
+                <div class="header-cart-title flex-w flex-sb-m p-b-8">
+                    <span class="mtext-103 cl2">
+                        Your Cart
+                    </span>
+
+                    <div class="fs-35 lh-10 cl2 p-lr-5 pointer hov-cl1 trans-04 js-hide-cart">
+                        <i class="zmdi zmdi-close"></i>
+                    </div>
+                </div>
+
+                <div class="header-cart-content flex-w js-pscroll">
+                    <!-- مكان المنتجات -->
+                    <ul id="basket-items" class="header-cart-wrapitem w-full">
+                        <!-- العناصر هتيجي من JavaScript -->
+                    </ul>
+
+                    <div class="w-full">
+                        <!-- الإجمالي -->
+                        <div id="basket-total" class="header-cart-total w-full p-tb-40">
+                            Total: $0.00
+                        </div>
+
+                        <div class="header-cart-buttons flex-w w-full">
+                            <a asp-action="Index" asp-controller="Basket"
+                               class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
+                                View Cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- مكان البوباب -->
+        <div id="profilePopupContainer" style="display:none;"></div>
+        @RenderBody()
+    </main>
+        @* @RenderBody() *@
+   
+    @await Component.InvokeAsync("SocialLinks")
+    <script src="~/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="~/vendor/animsition/js/animsition.min.js"></script>
+    <script src="~/vendor/bootstrap/js/popper.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/vendor/select2/select2.min.js"></script>
+    <script src="~/vendor/daterangepicker/moment.min.js"></script>
+    <script src="~/vendor/daterangepicker/daterangepicker.js"></script>
+    <script src="~/vendor/slick/slick.min.js"></script>
+    <script src="~/js/slick-custom.js"></script>
+    <script src="~/vendor/parallax100/parallax100.js"></script>
+    <script src="~/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+    <script src="~/vendor/isotope/isotope.pkgd.min.js"></script>
+    <script src="~/vendor/sweetalert/sweetalert.min.js"></script>
+    <script src="~/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @* <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script> *@
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.13/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $('.js-pscroll').each(function () {
+            $(this).css('position', 'relative');
+            $(this).css('overflow', 'hidden');
+            var ps = new PerfectScrollbar(this, {
+                wheelSpeed: 1,
+                scrollingThreshold: 1000,
+                wheelPropagation: false,
+            });
+
+            $(window).on('resize', function () {
+                ps.update();
+            })
+        });
+    </script>
+    <!-- Language switcher -->
+    <!-- Language switcher -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function getCookie(name) {
+                let matches = document.cookie.match(new RegExp(
+                    "(?:^|; )" + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + "=([^;]*)"
+                ));
+                return matches ? decodeURIComponent(matches[1]) : null;
+            }
+
+            // قراءة اللغة الحالية من الكوكي
+            let currentLang = getCookie(".AspNetCore.Culture");
+            if (currentLang) {
+                currentLang = currentLang.split('|')[0].split('=')[1];
+            } else {
+                currentLang = "en"; // افتراضي
+            }
+
+            let button = document.getElementById("langButton");
+
+            if (button) {
+                if (currentLang === "ar") {
+                    button.textContent = "EN";
+                    button.onclick = function (e) {
+                        e.preventDefault();
+                        setLanguage("en");
+                    };
+                } else {
+                    button.textContent = "Ar";
+                    button.onclick = function (e) {
+                        e.preventDefault();
+                        setLanguage("ar");
+                    };
+                }
+            }
+
+            // دالة تبعت للـ Action
+            function setLanguage(lang) {
+                fetch("/Mastar/SetLanguage?culture=" + lang + "&returnUrl=" + window.location.pathname, {
+                    method: "POST"
+                }).then(() => {
+                    location.reload();
+                });
+            }
+        });
+    </script>
+
+    <!-- profile Poypap  -->
+    <script>
+        $(document).on("click", "#openProfilePopup", function (e) {
+            e.preventDefault();
+
+            // عرض Loading مبدئي
+            $("#profilePopupContainer").html("<div style='color:white;text-align:center;padding:50px;'>جارٍ التحميل...</div>");
+            $("#profilePopupContainer").fadeIn();
+
+            $.ajax({
+                url: "@Url.Action("Profile", "Account")", // خلي دي Action ترجع PartialView
+                type: "GET",
+                success: function (data) {
+                    $("#profilePopupContainer").html(data).fadeIn();
+                },
+                error: function () {
+                    $("#profilePopupContainer").html("<div style='color:red;text-align:center;padding:50px;'>حصل خطأ!</div>");
+                }
+            });
+        });
+
+        // دالة لغلق البوباب
+        $(document).on("click", ".close-btn", function () {
+            $("#profilePopupContainer").fadeOut();
+        });
+    </script>
+
+
+    <!-- script GetAllBassket  -->
+    <script>
+        async function loadBasket() {
+            try {
+                // جلب السلة من الـ Controller
+                let response = await fetch('/Basket/GetBasket');
+                let basket = await response.json();
+
+                let basketItems = document.getElementById('basket-items');
+                let basketTotal = document.getElementById('basket-total');
+                let cartIcon = document.getElementById('cartIcon'); // ✅ الجزء المعدل
+
+                basketItems.innerHTML = "";
+
+                if (basket.items && basket.items.length > 0) {
+                    let total = 0;
+
+                    basket.items.forEach(item => {
+                        let itemTotal = item.price * item.quantity;
+                        total += itemTotal;
+
+                        basketItems.innerHTML += `
+                            <li class="header-cart-item flex-w flex-t m-b-12">
+                                <div class="header-cart-item-img">
+                                    <img src="${item.pictureUrl}" alt="IMG">
+                                </div>
+                                <div class="header-cart-item-txt p-t-8">
+                                    <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
+                                        ${item.productName}
+                                    </a>
+                                    <span class="header-cart-item-info">
+                                        ${item.quantity} x $${item.price.toFixed(2)}
+                                    </span>
+                                </div>
+                            </li>
+                        `;
+                    });
+
+                    total += basket.shippingPrice;
+                    basketTotal.innerHTML = `Total: $${total.toFixed(2)}`;
+
+                    // ✅ تعديل: تحديث عدد العناصر على أيقونة السلة
+                    if(cartIcon) {
+                        cartIcon.setAttribute('data-notify', basket.items.length);
+                    }
+
+                } else {
+                    basketItems.innerHTML = "<li><p>السلة فارغة</p></li>";
+                    basketTotal.innerHTML = "Total: $0.00";
+
+                    if(cartIcon) {
+                        cartIcon.setAttribute('data-notify', 0); // ✅ تعديل
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading basket", err);
+            }
+        }
+
+        // استدعاء عند تحميل الصفحة
+        document.addEventListener("DOMContentLoaded", loadBasket);
+    </script>
+
+    <!-- script pofileImage-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('@Url.Action("ProfileImageUrl", "Account")')
+                .then(response => response.text())
+                .then(url => {
+                    document.getElementById("profileImage").src = url;
+                })
+                .catch(error => {
+                    console.error("Error loading profile image:", error);
+                    document.getElementById("profileImage").src = "/images/user.png";
+                });
+        });
+    </script>
+
+    <script>
+        $('.js-addwish-b2').on('click', function (e) { e.preventDefault(); });
+        $('.js-addwish-b2').each(function () {
+            var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
+            $(this).on('click', function () {
+                swal(nameProduct, "is added to wishlist !", "success");
+                $(this).addClass('js-addedwish-b2').off('click');
+            });
+        });
+        $('.js-addwish-detail').each(function () {
+            var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
+            $(this).on('click', function () {
+                swal(nameProduct, "is added to wishlist !", "success");
+                $(this).addClass('js-addedwish-detail').off('click');
+            });
+        });
+        $('.js-addcart-detail').each(function () {
+            var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
+            $(this).on('click', function () {
+                swal(nameProduct, "is added to cart !", "success");
+            });
+        });
+    </script>
+
+
+    <script>
+        $(".js-select2").each(function () {
+            console.log("select2 switcher script loaded");
+            $(this).select2({
+                minimumResultsForSearch: 20,
+                dropdownParent: $(this).next('.dropDownSelect2')
+            });
+        });
+    </script>
+
+    <script>
+        $('.parallax100').parallax100();
+    </script>
+
+
+    <script>
+        $('.gallery-lb').each(function () {
+            $(this).magnificPopup({
+                delegate: 'a',
+                type: 'image',
+                gallery: { enabled: true },
+                mainClass: 'mfp-fade'
+            });
+        });
+    </script>
+
+    <script>
+        $('.js-pscroll').each(function () {
+            $(this).css({ position: 'relative', overflow: 'hidden' });
+            var ps = new PerfectScrollbar(this, {
+                wheelSpeed: 1,
+                scrollingThreshold: 1000,
+                wheelPropagation: false,
+            });
+            $(window).on('resize', function () { ps.update(); });
+        });
+    </script>
+
+    <!-- User menu -->
+    <script>
+        const userMenu = document.getElementById('userMenu');
+        if(userMenu) {
+            const menuLink = userMenu.querySelector('a');
+            if(menuLink) {
+                menuLink.addEventListener('click', function(e){
+                    e.preventDefault();
+                    userMenu.classList.toggle('active');
+                });
+            }
+            document.addEventListener('click', function(e){
+                if(!userMenu.contains(e.target)){
+                    userMenu.classList.remove('active');
+                }
+            });
+        }
+    </script>
+    <!--===============================================================================================-->
+    <script src="~/js/main.js"></script>
+    @* <script src="~/js/category.js"></script> *@
+    <!-- Optional: category.js -->
+    @*  <script src="~/js/display-category.js"></script> *@
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

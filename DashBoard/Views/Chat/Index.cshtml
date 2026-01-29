@@ -1,0 +1,69 @@
+﻿@model IReadOnlyList<Conversation>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2 class="mb-4">إدارة المحادثات المباشرة</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">المحادثات النشطة</div>
+            <div class="list-group list-group-flush" id="conversationList" style="height: 600px; overflow-y: auto;">
+                @if (Model != null)
+                {
+                    @foreach (var conversation in Model)
+                    {
+                        @* 💡 يجب تمرير معرّف العميل ووظيفة loadConversation *@
+                        <a href="#" class="list-group-item list-group-item-action" 
+                           data-conversation-id="@conversation.Id" 
+                           data-client-id="@conversation.ClientUserId" 
+                           onclick="loadConversation(@conversation.Id, '@conversation.ClientUserId', this)">
+                            <span class="fw-bold">العميل: @conversation.ClientUserId.Substring(0, Math.Min(conversation.ClientUserId.Length, 8))...</span>
+                            <span class="badge bg-primary float-end">@conversation.LastActivity.ToString("hh:mm tt")</span>
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h6 class="mb-0" id="currentChatHeader">الرجاء اختيار محادثة</h6>
+            </div>
+            <div id="chatWindow" class="card-body p-0">
+                <div id="messagesList" class="p-3" style="height: 500px; overflow-y: auto; background-color: #f8f9fa;">
+                    <p class="text-center text-muted mt-5">انقر على محادثة لعرض السجل.</p>
+                </div>
+
+                <div class="p-3 border-top" id="adminMessageInputArea" style="display: none;">
+                    @* 💡 استخراج معرّف المدير من الـ JWT *@
+                    @* <input type="hidden" id="adminSenderId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" /> *@
+                    @* 🚨 التعديل هنا: تعيين ID ثابت مؤقتاً للاختبار *@
+                    @* <input type="hidden" id="adminSenderId" value="	4bb9df56-c3f9-4a68-beb6-0dead18f8693" /> *@
+                    <input type="hidden"
+                           id="adminSenderId"
+                           value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
+                    <div class="input-group">
+                        <label for="adminFileInput" class="btn btn-outline-secondary me-2" style="cursor: pointer;">
+                            <i class="fas fa-paperclip"></i>
+                        </label>
+                        <input type="file" id="adminFileInput" style="display: none;" /> 
+
+                        <input type="text" id="messageInput" class="form-control" placeholder="الرد على العميل..." />
+
+                        <button class="btn btn-success" id="sendMessageButton" type="button">
+                            <i class="fas fa-reply"></i> إرسال
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+<script src="~/js/shared/sharedchatutils.js"></script>
+<script src="~/js/adminchat.js" defer></script>

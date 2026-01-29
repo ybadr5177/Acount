@@ -1,0 +1,228 @@
+﻿
+@{
+	ViewData["Title"] = "Home";
+}
+
+<div class="container-xxl">
+	<div class="mb-4">
+		<h3 class="mb-1" style="letter-spacing:.2px;">Welcome</h3>
+		<p class="text-muted" style="margin-top:-4px;">Quick access to key sections</p>
+	</div>
+
+	<div class="row g-3 mb-4">
+		<!-- Summary counters -->
+		<div class="col-12 col-sm-6 col-xl-3">
+			<div class="card shadow-sm h-100">
+				<div class="card-body d-flex align-items-center justify-content-between">
+					<div>
+						<div class="text-muted small">Users</div>
+						<div class="h5 mb-0" id="sumUsers">—</div>
+					</div>
+					<i class="bx bx-user fs-3 text-primary"></i>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-sm-6 col-xl-3">
+			<div class="card shadow-sm h-100">
+				<div class="card-body d-flex align-items-center justify-content-between">
+					<div>
+						<div class="text-muted small">Orders</div>
+						<div class="h5 mb-0" id="sumOrders">—</div>
+					</div>
+					<i class="bx bx-receipt fs-3 text-success"></i>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-sm-6 col-xl-3">
+			<div class="card shadow-sm h-100">
+				<div class="card-body d-flex align-items-center justify-content-between">
+					<div>
+						<div class="text-muted small">Deliveries</div>
+						<div class="h5 mb-0" id="sumDeliveries">—</div>
+					</div>
+					<i class="bx bx-send fs-3 text-info"></i>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-sm-6 col-xl-3">
+			<div class="card shadow-sm h-100">
+				<div class="card-body d-flex align-items-center justify-content-between">
+					<div>
+						<div class="text-muted small">Products</div>
+						<div class="h5 mb-0" id="sumProducts">—</div>
+					</div>
+					<i class="bx bx-cube fs-3 text-warning"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row g-3 mb-4">
+		<div class="col-12 col-md-6">
+			<div class="card shadow-sm h-100">
+				<div class="card-body">
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<h5 class="card-title mb-0">Total Users</h5>
+						<span class="badge bg-label-primary">Live</span>
+					</div>
+					<div id="cmUsersCountChart"></div>
+					<div class="d-flex gap-3 mt-3 small text-muted">
+						<div><span class="d-block">All time</span><span class="fw-semibold" id="usersAllTime">—</span></div>
+						<div><span class="d-block">This month</span><span class="fw-semibold" id="usersThisMonth">—</span></div>
+						<div><span class="d-block">Today</span><span class="fw-semibold" id="usersToday">—</span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-md-6">
+			<div class="card shadow-sm h-100">
+				<div class="card-body">
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<h5 class="card-title mb-0">Total Orders</h5>
+						<span class="badge bg-label-success">Live</span>
+					</div>
+					<div id="cmOrdersCountChart"></div>
+					<div class="d-flex gap-3 mt-3 small text-muted">
+						<div><span class="d-block">All time</span><span class="fw-semibold" id="ordersAllTime">—</span></div>
+						<div><span class="d-block">This month</span><span class="fw-semibold" id="ordersThisMonth">—</span></div>
+						<div><span class="d-block">Today</span><span class="fw-semibold" id="ordersToday">—</span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- duplicate summary row removed -->
+
+	<div class="tile-grid reveal-once">
+		<a asp-controller="Chat" asp-action="Index" class="tile-card tile-chat">
+			<span class="tile-icon"><i class="bx bx-chat"></i></span>
+			<span class="tile-label">Chat</span>
+		</a>
+
+		<a asp-controller="CozaMaster" asp-action="Categrey" class="tile-card tile-categories">
+			<span class="tile-icon"><i class="bx bx-category"></i></span>
+			<span class="tile-label">Categories</span>
+		</a>
+
+		<a asp-controller="SubCategrey" asp-action="GetAllSubCategrey" class="tile-card tile-subcategories">
+			<span class="tile-icon"><i class="bx bx-grid-alt"></i></span>
+			<span class="tile-label">Subcategories</span>
+		</a>
+
+		<a asp-controller="PredectCozaStore" asp-action="GetAllPredect" class="tile-card tile-products">
+			<span class="tile-icon"><i class="bx bx-cube"></i></span>
+			<span class="tile-label">Products</span>
+		</a>
+
+		<a asp-controller="CozaMaster" asp-action="CreatSlider" class="tile-card tile-slider">
+			<span class="tile-icon"><i class="bx bx-slideshow"></i></span>
+			<span class="tile-label">Slider</span>
+		</a>
+
+		<a asp-controller="CozaMaster" asp-action="CreatDiscountCodes" class="tile-card tile-discount">
+			<span class="tile-icon"><i class="bx bx-purchase-tag"></i></span>
+			<span class="tile-label">Discount Codes</span>
+		</a>
+
+		<a asp-controller="Users" asp-action="Index" class="tile-card tile-users">
+			<span class="tile-icon"><i class="bx bx-user"></i></span>
+			<span class="tile-label">Users</span>
+		</a>
+
+		<a asp-controller="Order" asp-action="GetAllOrde" class="tile-card tile-orders">
+			<span class="tile-icon"><i class="bx bx-receipt"></i></span>
+			<span class="tile-label">Orders</span>
+		</a>
+
+		<a asp-controller="Delivery" asp-action="GetAllDelivery" class="tile-card tile-delivery">
+			<span class="tile-icon"><i class="bx bx-send"></i></span>
+			<span class="tile-label">Delivery</span>
+		</a>
+	</div>
+</div>
+
+@section Scripts {
+<script>
+    (function () {
+        const fetchJson = async (url) => {
+            const res = await fetch(url, { cache: 'no-store' });
+            if (!res.ok) throw new Error('Request failed: ' + url);
+            return await res.json();
+        };
+
+        // radial summary removed; using line charts only
+
+        // Top summary counters
+        const refreshTotals = async () => {
+            try {
+                const t = await fetchJson('/CozaMaster/GetTotals');
+                document.getElementById('sumUsers').textContent = t.users ?? '0';
+                document.getElementById('sumOrders').textContent = t.orders ?? '0';
+                document.getElementById('sumDeliveries').textContent = t.deliveries ?? '0';
+                document.getElementById('sumProducts').textContent = t.products ?? '0';
+            } catch (e) { console.warn(e); }
+        };
+
+        // Daily series (line charts using Apex line with smooth curve)
+        const lineOptions = (labels, seriesName, data, color) => {
+            const hasData = Array.isArray(data) && data.length > 0;
+            const minVal = hasData ? Math.min.apply(null, data) : 0;
+            const offset = hasData ? Math.max(1, Math.ceil(minVal * 0.1)) : 0; // 10% or at least 1
+            const yMin = Math.max(0, minVal - offset);
+
+            return {
+                chart: { type: 'line', height: 300, animations: { enabled: true } },
+                series: [{ name: seriesName, data }],
+                xaxis: { categories: labels },
+                yaxis: { min: yMin },
+                stroke: { curve: 'smooth', width: 3 },
+                colors: [color],
+                markers: { size: 4, colors: ['#1a1a1a'], strokeColors: [color], strokeWidth: 2 },
+                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.05 } },
+                dataLabels: { enabled: false },
+                grid: { borderColor: '#444' }
+            };
+        };
+
+        let usersDailyChart, ordersDailyChart;
+
+        const renderDailyUsers = async () => {
+            const u = await fetchJson('/CozaMaster/GetUsersDaily?days=30');
+            document.getElementById('usersAllTime').textContent = u.stats.totalAllTime ?? '0';
+            document.getElementById('usersThisMonth').textContent = u.stats.thisMonth ?? '0';
+            document.getElementById('usersToday').textContent = u.stats.today ?? '0';
+            const opts = lineOptions(u.labels, 'New Users', u.data, '#696cff');
+            if (!usersDailyChart) {
+                usersDailyChart = new ApexCharts(document.querySelector('#cmUsersCountChart'), opts);
+                usersDailyChart.render();
+            } else {
+                usersDailyChart.updateOptions(opts);
+            }
+        };
+
+        const renderDailyOrders = async () => {
+            const o = await fetchJson('/CozaMaster/GetOrdersDaily?days=30');
+            document.getElementById('ordersAllTime').textContent = o.stats.totalAllTime ?? '0';
+            document.getElementById('ordersThisMonth').textContent = o.stats.thisMonth ?? '0';
+            document.getElementById('ordersToday').textContent = o.stats.today ?? '0';
+            const opts = lineOptions(o.labels, 'New Orders', o.data, '#71dd37');
+            if (!ordersDailyChart) {
+                ordersDailyChart = new ApexCharts(document.querySelector('#cmOrdersCountChart'), opts);
+                ordersDailyChart.render();
+            } else {
+                ordersDailyChart.updateOptions(opts);
+            }
+        };
+
+        // Initial load
+        refreshTotals();
+        renderDailyUsers();
+        renderDailyOrders();
+
+        // Auto refresh
+        setInterval(() => { refreshTotals(); renderDailyUsers(); renderDailyOrders(); }, 10000);
+    })();
+</script>
+}
+

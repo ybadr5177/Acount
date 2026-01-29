@@ -1,0 +1,51 @@
+// Theme mixin
+// *******************************************************************************
+
+@mixin template-common-theme($background, $color: null) {
+    @include text-variant('.text-success', $background);
+    @include bg-variant('.bg-success', $background);
+    @include bg-label-variant('.bg-label-success', $background);
+    @include border-label-variant('.border-label-success', $background);
+    @include border-light-variant('.border-light-success', $background);
+    @include template-pagination-theme($background, $color);
+    @include template-progress-bar-theme($background, $color);
+    @include template-list-group-theme($background, $color);
+    @include template-alert-variant('.alert-success', $background);
+    // Need to add shift-color as BS5 updated with table variant colors like this
+
+    @include template-table-variant('success', shift-color($background, $table-bg-scale));
+    @include template-button-variant('.btn-success', $background, $color);
+    @include template-button-outline-variant('.btn-outline-success', $background, $color);
+    @include template-dropdown-theme(rgba($background, 0.08), $background);
+    @include template-nav-theme($background, $color);
+    @include template-form-control-theme($background);
+    @include template-form-check-theme($background, $color);
+    @include template-form-switch-theme($background);
+    @include template-file-input-theme($background);
+
+    @include template-text-divider-variant('.divider-success', $background);
+
+    @include template-navbar-style('.navbar.bg-success', $success-color);
+    @include template-menu-style('.menu.bg-success', $success-color);
+    @include template-footer-style('.footer.bg-success', $success-color);
+    @include template-toast-theme('.bg-success', $success-color, $color);
+    @include template-float-label-theme($success-color);
+    @include template-svg-color($success-color);
+
+    html:not([dir='rtl']) .border-success,
+    html[dir='rtl'] .border-success {
+        border-color: $background !important;
+    }
+
+    a {
+        color: $background;
+
+        &:hover {
+            color: tint-color($background, 10%);
+        }
+    }
+
+    .fill-success {
+        fill: $background;
+    }
+}

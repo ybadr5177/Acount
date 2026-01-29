@@ -1,0 +1,120 @@
+﻿@model IEnumerable<AppUser>
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<h2 class="mt-4"> Users</h2>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <label class="me-2 mb-0">Filter:</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="statusFilter" id="statusAll" value="all" checked>
+                <label class="form-check-label" for="statusAll">All Users</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="statusFilter" id="statusEnabled" value="enabled">
+                <label class="form-check-label" for="statusEnabled">Enabled Users</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="statusFilter" id="statusDisabled" value="disabled">
+                <label class="form-check-label" for="statusDisabled">Disabled Users</label>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+<div class="card">
+    <h5 class="card-header"> Users Table</h5>
+    <div class="table-responsive text-nowrap">
+        <table   class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>First Name</th>
+                    <th>Status</th>
+                    <th>procedures</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0" id="usersBody">
+                @foreach (var user in Model)
+                {
+                    var isEnabled = user.LockoutEnd == null || user.LockoutEnd <= DateTimeOffset.UtcNow;
+                    <tr>
+                        <td>@user.Email</td>
+                        <td>@user.UserName</td>
+                        <td>
+                            <span class="badge @(isEnabled ? "bg-success" : "bg-secondary")">@(isEnabled ? "Enabled" : "Disabled")</span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2 align-items-center">
+                                <a asp-action="Edit" asp-controller="Users" asp-route-id="@user.Id" class="btn btn-outline-warning btn-sm d-inline-flex align-items-center justify-content-center" title="Edit">
+                                    <i class="bx bx-edit"></i>
+                                </a>
+                                @if (isEnabled)
+                                {
+                                    <a asp-action="Disable" asp-controller="Users" asp-route-id="@user.Id" class="btn btn-outline-danger btn-sm d-inline-flex align-items-center justify-content-center" title="Disable">
+                                        <i class="bx bx-lock"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-action="Enable" asp-controller="Users" asp-route-id="@user.Id" class="btn btn-outline-success btn-sm d-inline-flex align-items-center justify-content-center" title="Reactivate">
+                                        <i class="bx bx-lock-open"></i>
+                                    </a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    (function(){
+        const body = document.getElementById('usersBody');
+        const radios = document.querySelectorAll('input[name="statusFilter"]');
+
+        const renderRows = (items) => {
+            body.innerHTML = items.map(u => `
+                <tr>
+                    <td>${u.email ?? ''}</td>
+                    <td>${u.userName ?? ''}</td>
+                    <td><span class="badge ${u.status === 'Enabled' ? 'bg-success' : 'bg-secondary'}">${u.status}</span></td>
+                    <td>
+                        <div class="d-flex gap-2 align-items-center">
+                            <a href="/Users/Edit/${u.id}" class="btn btn-outline-warning btn-sm d-inline-flex align-items-center justify-content-center" title="Edit">
+                                <i class="bx bx-edit"></i>
+                            </a>
+                            ${u.status === 'Enabled' 
+                                ? `<a href="/Users/Disable/${u.id}" class="btn btn-outline-danger btn-sm d-inline-flex align-items-center justify-content-center" title="Disable"><i class="bx bx-lock"></i></a>`
+                                : `<a href="/Users/Enable/${u.id}" class="btn btn-outline-success btn-sm d-inline-flex align-items-center justify-content-center" title="Reactivate"><i class="bx bx-lock-open"></i></a>`}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        };
+
+        const fetchAndRender = async () => {
+            const selected = document.querySelector('input[name="statusFilter"]:checked').value;
+            const param = selected === 'all' ? '' : `?status=${selected}`;
+            const res = await fetch(`/Users/ListByStatus${param}`, { cache: 'no-store' });
+            if (!res.ok) return;
+            const data = await res.json();
+            renderRows(data);
+        };
+
+        radios.forEach(r => r.addEventListener('change', fetchAndRender));
+        // Initial fetch to normalize
+        fetchAndRender();
+    })();
+</script>
+}

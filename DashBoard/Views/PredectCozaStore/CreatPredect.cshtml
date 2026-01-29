@@ -1,0 +1,505 @@
+﻿@model ProductViewModel
+@{
+    ViewData["Title"] = "CreatPredect";
+}
+
+
+<h2 class="mt-4">Creat Product</h2>
+
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <div class="row">
+        <div class="card mb-4">
+            <div class="card-body">
+
+                <form id="productForm" class="custom-form" enctype="multipart/form-data">
+                    @*  <label class="form-label" for="image">Choose an image</label>
+                    <input class="form-control" type="file" id="PictureName" name="PictureName" multiple accept="image/*"> *@
+
+                    @* <div id="fileInputs">
+                        <input type="file" name="PictureName" multiple>
+                        <label class="form-label" for="image">Choose an image</label>
+                        <input class="form-control" type="file" id="PictureName" name="PictureName" multiple accept="image/*">
+                        <div id="previewContainer"></div>
+                        <button type="button" onclick="addFileInput()">Add More</button>
+                    </div>
+                     *@
+
+
+
+                    <div id="fileInputs">
+                        <label class="form-label" for="image">Choose an image</label>
+                        <input class="form-control" type="file" id="PictureName" name="PictureName" multiple accept="image/*">
+                    </div>
+                    <br />
+                    <button type="button" class="btn rounded-pill btn-success" onclick="addFileInput()">Add more photos+</button>
+
+                    <br />
+
+                    <label class="form-label" for="productName">Product Name in English:</label>
+                    <input class="form-control" type="text" id="Address_En" name="Address_En" required>
+                    <label class="form-label" for="productName">Product Name in Arabic :</label>
+                    <input class="form-control" type="text" id="Address_Ar" name="Address_Ar" required>
+
+
+                    <label class="form-label" for="productDescription">Description in English:</label>
+                    <textarea class="form-control" id="description_En" name="description_En" required></textarea>
+
+                    <label class="form-label" for="productDescription"> الوصف بل بلغة العربية:</label>
+                    <textarea class="form-control" id="description_Ar" name="description_Ar" required></textarea>
+
+                    <label class="form-label" for="BasePrice">  BasePrice :</label>
+                    <input class="form-control" type="number" id="BasePrice" name="BasePrice" required>
+
+                    <label class="form-label" for="productName">   BaseDiscountPrice :</label>
+                    <input class="form-control" type="number" id="BaseDiscountPrice" name="BaseDiscountPrice">
+
+                  @*   <label class="form-label" for="Discountrate"> Discountrate :</label>
+                    <input class="form-control" type="number" id="Discountrate" name="Discountrate"> *@
+                    <!-- الاسليدر الخاصة بعرض subCategory -->
+                    <div class="form-group">
+
+                        <div class="form-group mt-3">
+                            <label class="form-label">Select relation type:</label><br />
+
+                            <input type="radio" id="chooseCategory" name="selectionType" class="form-check-input" value="category">
+                            <label for="chooseCategory">Category</label>
+
+                            <input type="radio" id="chooseSubCategory" name="selectionType" value="subcategory" class="form-check-input">
+                            <label for="chooseSubCategory">SubCategory</label>
+                        </div>
+
+                        <div id="categoryContainer" class="form-group mt-2" style="display:none;">
+                            <label class="form-label" for="CategoryId">Select category</label>
+                            <select id="CategoryId" name="CategoryId" class="form-select" asp-items="@(new SelectList(Model.Categorys, "id", "Name_EN"))">
+                                <option value="">-- Choose Category --</option>
+                            </select>
+                        </div>
+
+                        <div id="subcategoryContainer" class="form-group mt-2" style="display:none;">
+                            <label class="form-label" asp-for="SubCategoryId">Select  subcategory </label>
+                            <select id="SubCategoryId" name="SubCategoryId" class="form-select" asp-items="@(new SelectList(Model.SubCategorys, "Id", "Name_EN"))">
+                                <option value="">-- Choose  --</option>
+                            </select>
+                            <span asp-validation-for="SubCategoryId" class="text-danger"></span>
+                        </div>
+
+                      
+                    </div>
+                    <br /> <br />
+                    <!-- زر إضافة مقاس -->
+                    <button class="btn btn-success d-grid w-100" type="button" id="addSizeBtn">Add a new size</button>
+
+                    <!-- قائمة المقاسات المضافة -->
+                    <table id="sizeTable">
+                        <thead>
+                            <tr>
+                                <th>نوع المقاس</th>
+                                <th>المقاس</th>
+                                <th>السعر</th>
+                                <th>السعر بعد الخصم</th>
+                                <th>الكمية</th>
+                                <th>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sizeTableBody">
+                            <!-- سيتم إضافة المقاسات هنا -->
+                        </tbody>
+                    </table>
+                    <br />
+                    <button class="btn btn-success d-grid w-100" type="submit" id="saveProductBtn">Save a new Product </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- فورم إضافة مقاس -->
+<div id="sizeForm" style="display:none;" class="custom-form">
+    <div id="sizeTypeContainer">
+        <label class="form-label" for="sizeType">Choose the Size type:</label>
+        <select class="form-select" id="sizeType" name="sizeType" required>
+              <option value="">-- Choose --</option>
+        </select>
+    </div>
+
+    <div id="sizeOptions"></div>
+
+    <label class="form-label" for="sizePrice">Price:</label>
+    <input class="form-control" type="number" id="sizePrice" name="sizePrice" required>
+
+    <label class="form-label" for="sizeStock">Stock:</label>
+    <input class="form-control" type="number" id="sizeStock" name="sizeStock" required>
+
+    @* <label class="form-label" for="DiscountPrice">DiscountPrice:</label>
+    <input class="form-control" type="number" id="DiscountPrice" name="DiscountPrice">
+
+   
+    <label class="form-label" for="Discountrate"> Discountrate :</label>
+    <input class="form-control" type="number" id="Discountrate" name="Discountrate"> *@
+
+    <div class="form-group mt-3">
+        <label class="form-label">Choose discount type:</label><br />
+
+        <input type="radio" id="radioDiscountPrice" name="discountType" value="price" class="form-check-input">
+        <label for="radioDiscountPrice">Discount Price</label>
+
+        <input type="radio" id="radioDiscountRate" name="discountType" value="rate" class="form-check-input ms-3">
+        <label for="radioDiscountRate">Discount Rate</label>
+    </div>
+
+    <!-- حقل السعر -->
+    <div class="form-group mt-2">
+        <label class="form-label" for="DiscountPrice">Discount Price:</label>
+        <input class="form-control" type="number" id="DiscountPrice" name="DiscountPrice" disabled>
+    </div>
+
+    <!-- حقل النسبة -->
+    <div class="form-group mt-2">
+        <label class="form-label" for="Discountrate">Discount Rate:</label>
+        <input class="form-control" type="number" id="Discountrate" name="Discountrate" disabled>
+    </div>
+
+    <br />
+    <button class="btn btn-success" type="button" id="saveSizeBtn">Save size </button>
+    <button class="btn btn-danger btn-buy-now" type="button" id="cancelSizeBtn">Cancel</button>
+</div>
+
+
+<script>
+
+     document.addEventListener("DOMContentLoaded", function () {
+        const categoryRadio = document.getElementById("chooseCategory");
+        const subCategoryRadio = document.getElementById("chooseSubCategory");
+
+        const categoryContainer = document.getElementById("categoryContainer");
+        const subcategoryContainer = document.getElementById("subcategoryContainer");
+
+        const categorySelect = document.getElementById("CategoryId");
+        const subCategorySelect = document.getElementById("SubCategoryId");
+
+        // لو اخترت كاتجري
+        categoryRadio.addEventListener("change", function () {
+            if (this.checked) {
+                categoryContainer.style.display = "block";   // يظهر الكاتجري
+                subcategoryContainer.style.display = "none"; // يخفي الساب كاتجري
+                subCategorySelect.value = ""; // يفضي الساب كاتجري
+            }
+        });
+
+        // لو اخترت ساب كاتجري
+        subCategoryRadio.addEventListener("change", function () {
+            if (this.checked) {
+                categoryContainer.style.display = "none";   // يخفي الكاتجري
+                subcategoryContainer.style.display = "block"; // يظهر الساب كاتجري
+                categorySelect.value = ""; // يفضي الكاتجري
+            }
+        });
+    });
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     const categoryRadio = document.getElementById("chooseCategory");
+    //     const subCategoryRadio = document.getElementById("chooseSubCategory");
+
+    //     const categoryContainer = document.getElementById("categoryContainer");
+    //     const subCategorySelect = document.getElementById("SubCategoryId");
+
+    //     categoryRadio.addEventListener("change", function () {
+    //         if (this.checked) {
+    //             categoryContainer.style.display = "block";
+    //             subCategorySelect.parentElement.style.display = "none";
+    //             subCategorySelect.value = "";
+    //         }
+    //     });
+
+    //     subCategoryRadio.addEventListener("change", function () {
+    //         if (this.checked) {
+    //             categoryContainer.style.display = "none";
+    //             subCategorySelect.parentElement.style.display = "block";
+    //             document.getElementById("CategoryId").value = "";
+    //         }
+    //     });
+    // });
+</script>
+
+<script>
+
+     function addFileInput() {
+        let container = document.getElementById('fileInputs');
+        let input = document.createElement('input');
+        input.type = 'file';
+        input.name = 'PictureName';
+        input.multiple = true;
+        input.classList.add('form-control');
+        container.appendChild(input);
+    }
+
+
+
+    let addedSizes = [];
+    let selectedSizeType = "";
+
+
+     document.addEventListener("DOMContentLoaded", function () {
+        fetch('/Size/GetAllNameSize')   // 🟢 غير URL لو الأكشن اسمه مختلف
+            .then(response => response.json())
+            .then(data => {
+                const sizeTypeSelect = document.getElementById('sizeType');
+                sizeTypeSelect.innerHTML = '<option value="">-- Choose --</option>'; // reset
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(type => {
+                        const option = document.createElement('option');
+                        option.value = type.value;   // 🟢 السيرفر يبعت value
+                        option.textContent = type.text; // 🟢 السيرفر يبعت label
+                        sizeTypeSelect.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error loading types:", error);
+            });
+    });
+
+    const discountPriceInput = document.getElementById("DiscountPrice");
+    const discountRateInput = document.getElementById("Discountrate");
+
+    const radioDiscountPrice = document.getElementById("radioDiscountPrice");
+    const radioDiscountRate = document.getElementById("radioDiscountRate");
+
+    // عند تغيير اختيار الراديو
+    radioDiscountPrice.addEventListener("change", function () {
+        if (this.checked) {
+            discountPriceInput.disabled = false;
+            discountRateInput.disabled = true;
+            discountRateInput.value = ""; // يمسح القيمة لو كان مكتوب فيه
+        }
+    });
+
+    radioDiscountRate.addEventListener("change", function () {
+        if (this.checked) {
+            discountRateInput.disabled = false;
+            discountPriceInput.disabled = true;
+            discountPriceInput.value = ""; // يمسح القيمة لو كان مكتوب فيه
+        }
+    });
+
+    document.getElementById('addSizeBtn').addEventListener('click', () => {
+        const form = document.getElementById('sizeForm');
+
+        // إظهار الفورم
+        form.style.display = 'block';
+
+        // إذا لم يتم اختيار نوع من قبل، نظهر الاختيارات
+        const sizeTypeContainer = document.getElementById('sizeTypeContainer');
+        if (!selectedSizeType) {
+            if (sizeTypeContainer) sizeTypeContainer.style.display = 'block';
+            document.getElementById('sizeOptions').innerHTML = "";
+            document.getElementById('sizeType').value = ""; // reset selection
+        } else {
+            if (sizeTypeContainer) sizeTypeContainer.style.display = 'none';
+            loadSizeOptions(selectedSizeType); // نحمّل نفس النوع السابق
+        }
+
+        // تأخير بسيط للتأكد من أن العنصر ظهر
+        setTimeout(() => {
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    });
+
+    document.getElementById('sizeType').addEventListener('change', (event) => {
+        selectedSizeType = event.target.value;
+        loadSizeOptions(selectedSizeType);
+    });
+
+    function loadSizeOptions(type) {
+        const optionsContainer = document.getElementById('sizeOptions');
+        optionsContainer.innerHTML = 'Loading...';
+
+        fetch(`/Size/GetByTypeSize?type=${type}`)
+            .then(response => response.json())
+            .then(data => {
+
+                optionsContainer.innerHTML = '';
+                if (!Array.isArray(data) || data.length === 0) {
+                    optionsContainer.textContent = 'No Sizes Available for this type.';
+                    return;
+                }
+
+                data.forEach(size => {
+                    const option = document.createElement('input');
+                    option.type = 'radio';
+                    option.name = 'sizeOption';
+                    option.value = size.id;
+                    option.id = 'size_' +  size.id;
+                    option.setAttribute('data-label', size.label);
+                    option.classList.add('form-check-input');
+
+                    const label = document.createElement('label');
+                    label.setAttribute('for', 'size_' + size.id);
+                    label.textContent = size.label;
+                    label.classList.add('form-label');
+
+                    const wrapper = document.createElement('div');
+                    wrapper.appendChild(option);
+                    wrapper.appendChild(label);
+
+                    optionsContainer.appendChild(wrapper);
+                });
+            })
+            .catch(error => {
+                optionsContainer.innerHTML = 'An Error Occurred While loading the Sizes..';
+                console.error('Error loading Sizes:', error);
+            });
+    }
+
+    document.getElementById('saveSizeBtn').addEventListener('click', () => {
+        const selectedSize = document.querySelector('input[name="sizeOption"]:checked');
+        const price = document.getElementById('sizePrice').value;
+        const Discountprice = document.getElementById('DiscountPrice').value;
+        const Discountrate = document.getElementById('Discountrate').value;
+
+        const stock = document.getElementById('sizeStock').value;
+
+        if (!selectedSize || !price || !stock) {
+            alert('Please Fill out all Fields');
+            return;
+        }
+
+        addedSizes.push({
+            sizeType: selectedSizeType,
+            DifferentSizeId: selectedSize.value,
+            size: selectedSize.value,
+            label: selectedSize.getAttribute('data-label'),
+            price: price,
+            Discountprice: Discountprice,
+            Discountrate:Discountrate,
+            stock: stock
+        });
+
+        updateSizeTable();
+        if (addedSizes.length === 1) {
+            document.getElementById("sizeType").disabled = true;
+        }
+
+        // إخفاء الفورم
+        document.getElementById('sizeForm').style.display = 'none';
+
+        // إعادة تعيين القيم
+        document.getElementById('sizePrice').value = '';
+        document.getElementById('DiscountPrice').value = '';
+        document.getElementById('sizeStock').value = '';
+        document.getElementById('sizeOptions').innerHTML = '';
+    });
+
+    document.getElementById('cancelSizeBtn').addEventListener('click', () => {
+        document.getElementById('sizeForm').style.display = 'none';
+        if (addedSizes.length === 0) {
+            document.getElementById("sizeTypeContainer").style.display = 'block';
+            document.getElementById("sizeType").disabled = false;
+            selectedSizeType = "";
+        }
+    });
+
+    function updateSizeTable() {
+        const tableBody = document.getElementById('sizeTableBody');
+        tableBody.innerHTML = '';
+
+        addedSizes.forEach((size, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${size.sizeType}</td>
+                <td>${size.label}</td>
+                <td>${size.price}</td>
+                <td>${size.Discountprice}</td>
+                <td>${size.stock}</td>
+                <td><button class="btn btn-danger btn-buy-now" type="button" onclick="deleteSize(${index})">Delete</button></td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function deleteSize(index) {
+        addedSizes.splice(index, 1);
+        updateSizeTable();
+        // لو مفيش أي مقاسات، نسمح بتغيير النوع تاني
+        if (addedSizes.length === 0) {
+            selectedSizeType = ""; // نرجّع الاختيار فاضي
+            document.getElementById("sizeType").disabled = false;
+            document.getElementById("sizeTypeContainer").style.display = "block";
+        }
+    }
+
+    document.getElementById('productForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        //const productName = document.getElementById('productName').value;
+        //const productDescription = document.getElementById('productDescription').value;
+       
+
+         const formData =new FormData();
+        formData.append("Address_En", document.getElementById("Address_En").value);
+        formData.append("Address_Ar", document.getElementById("Address_Ar").value);
+        formData.append("description_En", document.getElementById("description_En").value);
+        formData.append("description_Ar", document.getElementById("description_Ar").value);
+        formData.append("BasePrice", document.getElementById("BasePrice").value);
+        formData.append("BaseDiscountPrice", document.getElementById("BaseDiscountPrice").value);
+        formData.append("Discountrate", document.getElementById("Discountrate").value);
+        formData.append("Type", document.getElementById("sizeType").value || 0);
+        formData.append("SubCategoryId", parseInt(document.getElementById("SubCategoryId").value) ||  "");
+        formData.append("CategoryId", parseInt(document.getElementById("CategoryId").value) ||  "");
+         // {
+        //     Address_En: document.getElementById("Address_En").value,
+        //     Address_Ar: document.getElementById("Address_Ar").value,
+        //     description_En: document.getElementById("description_En").value,
+        //     description_Ar: document.getElementById("description_Ar").value,
+        //     Type: typeMap[document.getElementById("sizeType").value] || 0,
+        //     SubCategoryId: parseInt(document.getElementById("SubCategoryId").value) || 0,
+
+        //     PictureName: document.getElementById("PictureName").files[0]?.name || "",
+        //     ProductSizes: addedSizes
+        // };
+
+
+
+
+    //       const files  = document.getElementById("PictureName").files;
+    //       for (let i = 0; i < files.length; i++) {
+    //     formData.append("PictureName", files[i]); // كل مرة بحط ملف جديد
+    // } 
+           
+    const fileInputs = document.querySelectorAll('#fileInputs input[type="file"]');
+        fileInputs.forEach(input => {
+            Array.from(input.files).forEach(file => {
+                formData.append("PictureName", file);
+            });
+        });
+
+
+
+
+         formData.append("ProductSizesJson", JSON.stringify(addedSizes));
+
+        fetch('/PredectCozaStore/CreatPredect', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+        if (!response.ok) {
+            throw new Error("Server error: " + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            alert('✅ The Product has been Saved Successfully');
+            location.reload(); // إعادة تحميل الصفحة
+        } else {
+            alert('❌ Failed to save product: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        alert('⚠️ There Was An Error Saving The Product: ' + error.message);
+    });
+    });
+</script>
+

@@ -1,0 +1,78 @@
+﻿@model IReadOnlyList<DisplayDeliveryCostViewModel>
+@{
+    ViewData["Title"] = "GetAllDelivery";
+}
+
+<h2 class="mt-4">AllDelivery</h2>
+
+
+<br />
+@* <a asp-action="DeliveryCharge" asp-controller="Delivery" class="custom-button">+ Create a New DeliveryCharge</a> *@
+
+
+
+
+
+<div class="card">
+    <h5 class="card-header"> Delivery Table</h5>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Country</th>
+                    <th>state</th>
+                    <th>المحافظه</th>
+                    <th>Fees</th>
+                    <th>Delivery time message</th>
+                    <th>Cost</th>
+
+
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+
+
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user?.DeliveryCountry</td>
+                        <td>@user?.Name_EN</td>
+                        <td>@user?.Name_AR</td>
+                        <td>@user?.ShippingType</td>
+                        <td>@user?.DeliveryTime</td>
+                        <td>@user?.Cost</td>
+
+
+                       @*  <td >
+                            <div class="d-flex gap-2">
+
+                                <a asp-action="EditSubCategrey"
+                                   asp-controller="SubCategrey"
+                                   asp-route-id="@user?.Id"
+                                   class="badge btn-warning d-flex justify-content-center align-items-center btn btn-icon  btn-sm"
+                                   title="Edit">
+                                    <i class="bx bx-edit"></i>
+                                </a>
+
+
+                                <a asp-action="DeleteSubCategreyfn"
+                                   asp-controller="SubCategrey"
+                                   asp-route-id="@user?.Id"
+                                   class="badge  d-flex btn-danger d-flex justify-content-center align-items-center btn btn-icon  btn-sm"
+                                   title="Delete">
+                                    <i class="tf-icons bx bx-trash"></i>
+                                </a>
+                            </div>
+                           
+
+                        </td> *@
+                    </tr>
+                }
+
+
+
+            </tbody>
+
+        </table>
+    </div>
+</div>

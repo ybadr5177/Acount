@@ -1,0 +1,201 @@
+﻿
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="m-0">Orders</h2>
+
+    <div class="d-flex gap-2 align-items-center">
+        <!-- 🔹 فلتر الدفع -->
+        <select id="filterPayment" class="form-select" style="width:150px">
+            <option value="">All Payments</option>
+            <option value="Pending">Pending</option>
+            <option value="PaymentReceived">Received</option>
+            <option value="PaymentFailed">Failed</option>
+        </select>
+
+        <!-- 🔹 فلتر الشحن -->
+        <select id="filterShipping" class="form-select" style="width:150px">
+            <option value="">All Shipping</option>
+            <option value="PendingShipment">Pending</option>
+            <option value="Processing">Processing</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Returned">Returned</option>
+        </select>
+
+        <!-- 🔹 البحث -->
+        <div class="input-group" style="max-width: 280px;">
+            <span class="input-group-text"><i class="bx bx-search"></i></span>
+            <input id="orderSearch" type="text" class="form-control" placeholder="Search by email or status...">
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Order #</th>
+                    <th>Buyer Email</th>
+                    <th>Date</th>
+                    <th>Payment Status</th>
+                    <th>Shipping Status</th>
+                    <th class="text-end">Total</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="ordersBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 🎨 CSS لتلوين النصوص وحالات الشحن -->
+<style>
+    /* 🔹 كل الـ select يكون لونه أسود */
+    .form-select {
+        color: #000 !important;
+    }
+
+    /* 🔹 لون النص داخل كل option حسب الحالة */
+    .shipping-select option[value="PendingShipment"] {
+        color: #ffc107;
+    }
+    /* أصفر */
+    .shipping-select option[value="Processing"] {
+        color: #17a2b8;
+    }
+    /* سماوي */
+    .shipping-select option[value="Shipped"] {
+        color: #007bff;
+    }
+    /* أزرق */
+    .shipping-select option[value="Delivered"] {
+        color: #28a745;
+    }
+    /* أخضر */
+    .shipping-select option[value="Cancelled"] {
+        color: #dc3545;
+    }
+    /* أحمر */
+    .shipping-select option[value="Returned"] {
+        color: #6c757d;
+    }
+    /* رمادي */
+</style>
+
+@section Scripts {
+    <script>
+        (function () {
+            const body = document.getElementById('ordersBody');
+            const search = document.getElementById('orderSearch');
+            const filterPayment = document.getElementById('filterPayment');
+            const filterShipping = document.getElementById('filterShipping');
+
+            const fmtMoney = (n) => new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(n ?? 0);
+            const fmtDate = (d) => {
+                try { return new Date(d).toLocaleString(); } catch { return d; }
+            };
+
+            // ✅ دالة لتلوين الـ select حسب الحالة
+            function setShippingColor(select) {
+                const val = select.value;
+                select.style.color =
+                    val === "Delivered" ? "#28a745" :
+                    val === "Cancelled" ? "#dc3545" :
+                    val === "Returned" ? "#6c757d" :
+                    val === "Shipped" ? "#007bff" :
+                    val === "Processing" ? "#17a2b8" :
+                    val === "PendingShipment" ? "#ffc107" :
+                    "#000";
+            }
+
+            const render = (items) => {
+                body.innerHTML = items.map(o => `
+                    <tr>
+                        <td>${o.id}</td>
+                        <td>${o.buyerEmail ?? ''}</td>
+                        <td>${fmtDate(o.orderDate)}</td>
+                        <td><span class="badge ${o.status === 'Pending' ? 'bg-warning' :
+                            o.status === 'PaymentFailed' ? 'bg-danger' : 'bg-success'}">${o.status}</span></td>
+
+                        <!-- 🔹 عمود حالة الشحن -->
+                        <td>
+                            <select class="form-select form-select-sm shipping-select" data-id="${o.id}">
+                                ${['PendingShipment', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned'].map(s =>
+                                    `<option value="${s}" ${o.shippingStatus === s ? 'selected' : ''}>${s}</option>`).join('')}
+                            </select>
+                        </td>
+
+                        <td class="text-end">${fmtMoney(o.total)}</td>
+
+                        <!-- 🔹 أيقونة الحذف -->
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${o.id}">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                // 🟢 بعد ما نرسم الجدول، نلوّن كل السلكت
+                document.querySelectorAll('.shipping-select').forEach(setShippingColor);
+            };
+
+            const load = async () => {
+                const res = await fetch('/Order/ListAll', { cache: 'no-store' });
+                if (!res.ok) return;
+                const data = await res.json();
+
+                const q = (search.value || '').toLowerCase();
+                const payFilter = filterPayment.value;
+                const shipFilter = filterShipping.value;
+
+                const filtered = data.filter(o =>
+                    (!q || (o.buyerEmail || '').toLowerCase().includes(q) || (o.status || '').toLowerCase().includes(q)) &&
+                    (!payFilter || o.status === payFilter) &&
+                    (!shipFilter || o.shippingStatus === shipFilter)
+                );
+
+                render(filtered);
+            };
+
+            // ✅ تحديث حالة الشحن
+            body.addEventListener('change', async (e) => {
+                if (e.target.classList.contains('shipping-select')) {
+                    const id = e.target.dataset.id;
+                    const val = e.target.value;
+
+                    setShippingColor(e.target); // ← يغير اللون حسب الحالة مباشرة
+
+                    await fetch('/Order/UpdateShippingStatus', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id, status: val })
+                    });
+                }
+            });
+
+            // ✅ حذف الطلب
+            body.addEventListener('click', async (e) => {
+                if (e.target.closest('.delete-btn')) {
+                    const id = e.target.closest('.delete-btn').dataset.id;
+                    if (confirm('هل أنت متأكد من حذف هذا الطلب؟')) {
+                        await fetch('/Order/Delete/' + id, { method: 'DELETE' });
+                        load();
+                    }
+                }
+            });
+
+            search.addEventListener('input', load);
+            filterPayment.addEventListener('change', load);
+            filterShipping.addEventListener('change', load);
+
+            load();
+        })();
+    </script>
+}
+

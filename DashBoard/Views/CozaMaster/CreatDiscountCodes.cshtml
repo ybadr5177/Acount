@@ -1,0 +1,35 @@
+﻿@model DiscountCodesViewModel
+@{
+    ViewData["Title"] = "CreatDiscountCodes";
+}
+
+<h2 class="mt-4">Creat Discount Percentage</h2>
+<!-- Content -->
+
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <div class="row">
+        @*  <div class="col-md-6">
+           
+            
+        </div> *@
+        <div class="card mb-4">
+            <div class="card-body">
+
+                <form class="custom-form" asp-action="CreatDiscountCodes" asp-controller="CozaMaster" method="post" enctype="multipart/form-data">
+                    <label for="Name" class="form-label"> Codes</label>
+                    <input type="text" class="form-control" id="Codes" name="Codes" placeholder="Type the Codes here">
+
+                    <label for="Name" class="form-label"> Discount Percentage</label>
+                    <input type="text" min="1" class="form-control" id="DiscountPercentage" name="DiscountPercentage" placeholder="Type the Discount Percentage here">
+
+                   
+
+                    <br />
+                    <button class="btn btn-success d-grid w-100" type="submit">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

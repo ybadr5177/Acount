@@ -1,0 +1,49 @@
+﻿@model IEnumerable<opponent>
+@{
+    ViewData["Title"] = "GetAllDiscountCodes";
+}
+
+<a asp-action="CreatDiscountCodes" asp-controller="CozaMaster" class="btn btn-sm btn-dark  btn-custom">+  إضافةعنصر جديد</a>
+<div class="card mb-4">
+    <div class="table-wrapper">
+        <i class="fas fa-table me-1"></i>
+        List of registered emails
+    </div>
+    <div class="card-body">
+        <table @* id="datatablesSimple" *@  class="table">
+            <thead>
+                <tr>
+
+                    <th>Discount Percentage</th>
+                    <th>Codes</th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user?.DiscountPercentage</td>
+                        <td>@user?.Codes</td>
+
+                        <td>
+                            <a asp-action="EditDiscountCodes" asp-controller="CozaMaster" asp-route-id="@user.Id" class="btn btn-warning">Edit</a>
+
+                            <a asp-action="DeleteDiscountCodes" asp-controller="CozaMaster" asp-route-id="@user?.Id" class="btn btn-warning">Delete</a>
+
+
+
+                        </td>
+                    </tr>
+                }
+
+
+
+            </tbody>
+
+        </table>
+    </div>
+</div>
+

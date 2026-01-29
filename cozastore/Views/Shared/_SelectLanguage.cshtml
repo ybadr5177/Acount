@@ -1,0 +1,57 @@
+﻿@using Microsoft.AspNetCore.Builder;
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Http.Features;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.Extensions.Options;
+
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+
+
+<a href="#" id="langButton" class="flex-c-m trans-04 p-lr-25">Loading...</a>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function getCookie(name) {
+            let matches = document.cookie.match(new RegExp(
+                "(?:^|; )" + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + "=([^;]*)"
+            ));
+            return matches ? decodeURIComponent(matches[1]) : null;
+        }
+
+        // قراءة اللغة الحالية من الكوكي
+        let currentLang = getCookie(".AspNetCore.Culture");
+        if (currentLang) {
+            currentLang = currentLang.split('|')[0].split('=')[1];
+        } else {
+            currentLang = "en"; // افتراضي
+        }
+
+        let button = document.getElementById("langButton");
+
+        if (button) {
+            if (currentLang === "ar") {
+                button.textContent = "EN";
+                button.onclick = function (e) {
+                    e.preventDefault();
+                    setLanguage("en");
+                };
+            } else {
+                button.textContent = "Ar";
+                button.onclick = function (e) {
+                    e.preventDefault();
+                    setLanguage("ar");
+                };
+            }
+        }
+
+        // دالة تبعت للـ Action
+        function setLanguage(lang) {
+            fetch("/Home/SetLanguage?culture=" + lang + "&returnUrl=" + window.location.pathname, {
+                method: "POST"
+            }).then(() => {
+                location.reload();
+            });
+        }
+    });
+</script>

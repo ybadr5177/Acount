@@ -1,0 +1,41 @@
+﻿@model UserViewModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<form asp-controller="Users" asp-action="Edit" id="@Model.Id" method="POST" enctype="multipart/form-data">
+    <div class="row">
+        <div class="mb-3 col-md-6">
+            <label for="Email" class="form-label">Email</label>
+            <input class="form-control"
+                   type="text"
+                   id="Email"
+                   name="Email"
+                   value=@Model?.Email
+                   autofocus />
+        </div>
+        <div class="mb-3 col-md-6">
+            <label for="FristNames" class="form-label">FristName</label>
+            <input class="form-control" type="text" name="FristNames" id="FristNames" value=@Model?.FristNames />
+        </div>
+        <div class="mb-3 col-md-6">
+            <label for="PhoneNumber" class="form-label">PhoneNumber</label>
+            <input class="form-control" type="text" name="PhoneNumber" id="PhoneNumber" value=@Model?.PhoneNumber />
+        </div>
+        <div class="mb-3 col-md-6">
+            <label for="DateOfBirth" class="form-label">Date Of Birth</label>
+            <input class="form-control" type="date" name="DateOfBirth" id="DateOfBirth" value=@Model?.DateOfBirth />
+        </div>
+
+        <label asp-for="Gender"></label>
+        <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-control"></select>
+        <span asp-validation-for="Gender" class="text-danger"></span>
+
+    </div>
+    <div class="mt-2">
+        <button type="submit" class="btn btn-primary me-2">Save changes</button>
+        <button type="submit" class="btn btn-outline-secondary" asp-controller="Users" asp-action="Index">Cancel</button>
+    </div>
+</form>
+
+

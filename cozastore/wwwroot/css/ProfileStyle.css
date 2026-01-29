@@ -1,0 +1,27 @@
+﻿.user-menu {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.user-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.dropdown-toggle {
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
+.dropdown-menu {
+    min-width: 150px;
+}
+
+.dropdown-item {
+    padding: 8px 15px;
+    font-size: 16px;
+}

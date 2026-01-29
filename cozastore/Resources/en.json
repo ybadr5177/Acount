@@ -1,0 +1,113 @@
+{
+  "ProductOverview": "Product Overview",
+  "home": "Home",
+  "ContactUS": "Contact US",
+  "Feedback": "Feedback",
+  "Info": "Info",
+  "TermsAndConditions": "Terms & Conditions",
+  "CategoryOverview": "Category Overview",
+  "ShopNow": "Shop Now",
+  "MyAccount": "My Account",
+  "HelpAndFAQs": "Help & FAQs",
+  "Logout": "Logout",
+  "Login": "Login",
+  "Register": "Register",
+  "Profile": "Profile",
+  "search": "Search",
+  "Filter": "Filter",
+  "QuickView": "Quick View",
+  "Myorders": "My Orders",
+  "Favorites": "Favorites",
+  "Recipient'sname": "Recipient's Name",
+  "Requestnumber": "Request Number",
+  "date": "Date",
+  "condition": "Condition",
+  "Deliverycost": "Delivery Cost",
+  "EstimatedDeliveryDate": "Estimated Delivery Date",
+  "Total": "Total",
+  "Deliveryaddress": "Delivery Address",
+  "Price": "Price",
+  "Quantity": "Quantity",
+  "TheOrderMessageIsEmpty": "The Order Message is Empty",
+  "Soldby": "Sold by",
+  "delete": "delete",
+  "Ordersummary": "Order Summary",
+  "Enterthecode": "Enter The Code",
+  "Apply": "Apply",
+  "Subtotal": "Subtotal",
+  "coupon": "Coupon",
+  "total": "Total",
+  "Paymentpage": "Payment page",
+  "Fastshipping": "Fast Shipping",
+  "Yourproducts": "Your Products",
+  "address": "Address",
+  "opponent": "Opponent",
+  "Delivery": "Delivery",
+  "ChooseThePaymentMethod": "Choose The Payment Method",
+  "cash": "Cash",
+  "Visa": "Visa",
+  "Paynow": "Pay Now",
+  "Specifythedeliveryaddress": "Specify the delivery address",
+  "AddANewAddress": "Add a new address",
+  "Confirm ": "Confirm",
+  "cancel ": "Cancel",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "street": "Street",
+  "city": "City",
+  "country": "Country",
+  "phoneNumber": "Phone Number",
+  "isDefault": "Set as default address",
+  "save": "Save",
+  "Sorry": "Sorry",
+  "ThisProductIsNoLongerAvailableOrHasBeenRemovedFromTheStore": "This product is no longer available or has been removed from the store.",
+  "YouCanGoBackTo": "You can go back to",
+  "ToBrowseMoreProducts": "To browse more products"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

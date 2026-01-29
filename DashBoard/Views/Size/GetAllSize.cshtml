@@ -1,0 +1,77 @@
+﻿@model IEnumerable<DifferentSizeViewModel>
+@{
+    ViewData["Title"] = "GetAllSize";
+}
+
+
+<h2 class="mt-4"> Size</h2>
+<br />
+<a asp-action="CreatSize" asp-controller="Size" class="custom-button">+ Create a New Size</a>
+
+
+
+
+
+<div class="card">
+    <h5 class="card-header"> Size Table</h5>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+
+                    <th>Label</th>
+                    <th>Type</th>
+
+
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+
+
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user?.Label</td>
+                        <td>@user?.SizeNameId</td>
+
+
+                        <td>
+
+
+                            <div class="d-flex gap-2">
+                                <a asp-action="EditSize"
+                                   asp-controller="Size"
+                                   asp-route-id="@user.Id"
+                                   class="badge btn-warning d-flex justify-content-center align-items-center btn btn-icon  btn-sm"
+                                   title="Edit">
+                                    <i class="bx bx-edit"></i>
+                                </a>
+
+                                @*  <a asp-action="DeleteCategrey" asp-controller="CozaMaster" asp-route-id="@user?.id" class="badge rounded-pill btn-danger">Delete</a> *@
+                                <a asp-action="DeleteSize"
+                                   asp-controller="Size"
+                                   asp-route-id="@user?.Id"
+                                   class="badge  d-flex btn-danger d-flex justify-content-center align-items-center btn btn-icon  btn-sm"
+                                   title="Delete">
+                                    <i class="tf-icons bx bx-trash"></i>
+                                </a>
+
+                            </div>
+                            @* <a asp-action="EditSize" asp-controller="Size" asp-route-id="@user.Id" class="badge rounded-pill btn-warning">Edit</a>
+
+                            <a asp-action="DeleteSize" asp-controller="Size" asp-route-id="@user?.Id" class="badge rounded-pill btn-danger">Delete</a> *@
+
+
+
+                        </td>
+                    </tr>
+                }
+
+
+
+            </tbody>
+
+        </table>
+    </div>
+</div>
+

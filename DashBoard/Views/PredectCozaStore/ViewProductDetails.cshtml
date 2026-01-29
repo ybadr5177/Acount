@@ -1,0 +1,52 @@
+﻿@model IEnumerable<ProductSizeEntryViewModel>
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="card shadow-card fade-in mb-4">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+            <i class="bx bx-cube text-primary"></i>
+            <h5 class="mb-0">Product Details</h5>
+        </div>
+        <span class="text-muted small">Sizes, pricing and stock</span>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Size</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user?.SizeLabel</td>
+                            <td>@user?.Price</td>
+                            <td>@user?.Stock</td>
+                            @* <td>@user?.</td> *@
+                            <td>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <a asp-action="EditCategrey" asp-controller="PredectCoza" asp-route-id="@user.Id" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center" title="Edit">
+                                        <i class="bx bx-edit"></i>
+                                    </a>
+                                    <a asp-action="DeleteCategrey" asp-controller="PredectCoza" asp-route-id="@user?.Id" class="btn btn-outline-danger btn-sm d-inline-flex align-items-center justify-content-center" title="Delete">
+                                        <i class="bx bx-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <input type="hidden" name="DifferentSizeId" value="@user?.DifferentSizeId" />
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

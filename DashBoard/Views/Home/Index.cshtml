@@ -1,0 +1,148 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-xxl py-3">
+    <div class="row g-3">
+        <div class="col-12">
+            <h2 class="mb-3">Overview</h2>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a asp-controller="Users" asp-action="Index" class="tile-btn d-flex align-items-center justify-content-between p-3 rounded-lg shadow-md text-decoration-none">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="tile-icon bg-primary-subtle"><i class="bx bx-user"></i></span>
+                    <div>
+                        <div class="fw-semibold">Users</div>
+                        <div class="small text-muted">Manage users</div>
+                    </div>
+                </div>
+                <i class="bx bx-chevron-right text-muted"></i>
+            </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a asp-controller="PredectCozaStore" asp-action="GetAllPredect" class="tile-btn d-flex align-items-center justify-content-between p-3 rounded-lg shadow-md text-decoration-none">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="tile-icon bg-indigo-subtle"><i class="bx bx-cube"></i></span>
+                    <div>
+                        <div class="fw-semibold">Products</div>
+                        <div class="small text-muted">Catalog and sizes</div>
+                    </div>
+                </div>
+                <i class="bx bx-chevron-right text-muted"></i>
+            </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a asp-controller="Order" asp-action="GetAllOrde" class="tile-btn d-flex align-items-center justify-content-between p-3 rounded-lg shadow-md text-decoration-none">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="tile-icon bg-green-subtle"><i class="bx bx-receipt"></i></span>
+                    <div>
+                        <div class="fw-semibold">Orders</div>
+                        <div class="small text-muted">Track orders</div>
+                    </div>
+                </div>
+                <i class="bx bx-chevron-right text-muted"></i>
+            </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a asp-controller="Chat" asp-action="Index" class="tile-btn d-flex align-items-center justify-content-between p-3 rounded-lg shadow-md text-decoration-none">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="tile-icon bg-cyan-subtle"><i class="bx bx-chat"></i></span>
+                    <div>
+                        <div class="fw-semibold">Chat</div>
+                        <div class="small text-muted">Conversations</div>
+                    </div>
+                </div>
+                <i class="bx bx-chevron-right text-muted"></i>
+            </a>
+        </div>
+
+        <div class="col-12">
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="card-title mb-0">Total Users</h5>
+                                <span class="badge bg-label-primary">Live</span>
+                            </div>
+                            <div id="usersCountChart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="card-title mb-0">Total Orders</h5>
+                                <span class="badge bg-label-success">Live</span>
+                            </div>
+                            <div id="ordersCountChart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    (function () {
+        const fetchJson = async (url) => {
+            const res = await fetch(url, { cache: 'no-store' });
+            if (!res.ok) throw new Error('Request failed: ' + url);
+            return await res.json();
+        };
+
+        const makeRadialOptions = (label, value) => ({
+            chart: { type: 'radialBar', height: 280, animations: { enabled: true } },
+            series: [value],
+            labels: [label],
+            plotOptions: {
+                radialBar: {
+                    hollow: { size: '65%' },
+                    dataLabels: { value: { formatter: (v) => Math.round(v).toString() } }
+                }
+            },
+            colors: ['#696cff']
+        });
+
+        let usersChart, ordersChart;
+
+        const renderOrUpdate = (elId, chartRef, label, value, color) => {
+            const options = makeRadialOptions(label, value);
+            if (color) options.colors = [color];
+            if (!chartRef.instance) {
+                chartRef.instance = new ApexCharts(document.querySelector(elId), options);
+                chartRef.instance.render();
+            } else {
+                chartRef.instance.updateOptions(options);
+            }
+        };
+
+        const state = { users: 0, orders: 0 };
+
+        const refresh = async () => {
+            try {
+                const [u, o] = await Promise.all([
+                    fetchJson('/Users/TotalCount'),
+                    fetchJson('/Order/TotalCount')
+                ]);
+                state.users = u.count ?? 0;
+                state.orders = o.count ?? 0;
+                renderOrUpdate('#usersCountChart', usersChart = usersChart || {}, 'Users', state.users, '#696cff');
+                renderOrUpdate('#ordersCountChart', ordersChart = ordersChart || {}, 'Orders', state.orders, '#71dd37');
+            } catch (e) {
+                console.warn('Refresh failed', e);
+            }
+        };
+
+        refresh();
+        setInterval(refresh, 10000);
+    })();
+</script>
+}

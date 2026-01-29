@@ -1,0 +1,9 @@
+// Alerts
+// *******************************************************************************
+
+// Alert mixins
+@each $state, $value in $theme-colors {
+  @if $state != success and $state != light {
+    @include template-alert-variant('.alert-#{$state}', $value);
+  }
+}

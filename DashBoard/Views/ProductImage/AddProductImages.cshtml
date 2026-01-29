@@ -1,0 +1,30 @@
+﻿AddProductImagesViewModel
+@{
+    ViewData["Title"] = "AddProductImages";
+}
+
+<h2 class="mt-4">Add image</h2>
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <div class="row">
+        @*  <div class="col-md-6">
+           
+            
+        </div> *@
+        <div class="card mb-4">
+            <div class="card-body">
+
+                <form class="custom-form" asp-action="AddProductImages" asp-controller="ProductImage" method="post" enctype="multipart/form-data">
+                    <label for="image" class="form-label">Choose an image</label>
+                    <input type="file" class="form-control" id="Image" name="Image" accept="image/*">
+
+                    <input type="hidden" id="ProductId" name="ProductId">
+                    <br />
+                    <button class="btn btn-success d-grid w-100" type="submit">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

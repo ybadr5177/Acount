@@ -1,0 +1,110 @@
+﻿@model SliderViewModel
+@{
+    ViewData["Title"] = "CreatSlider";
+}
+<h2 class="mt-4">Creat Slider</h2>
+
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <div class="row">
+        @*  <div class="col-md-6">
+           
+            
+        </div> *@
+        <div class="card mb-4">
+            <div class="card-body">
+                <form asp-controller="CozaMaster" asp-action="CreatSlider" method="post" enctype="multipart/form-data" class="custom-form">
+                    <label class="form-label" for="Title">Title  in English:</label>
+                    <input class="form-control" type="text" id="Title" name="Title" required>
+                    <label class="form-label" for="Title">Titl  in Arabic :</label>
+                    <input class="form-control" type="text" id="Title_AR" name="Title_AR" required>
+
+
+                    <label class="form-label" for="Description">Description in English:</label>
+                    <textarea class="form-control" id="Description" name="Description" required></textarea>
+
+                    <label class="form-label" for="Description"> الوصف بل بلغة العربية:</label>
+                    <textarea class="form-control" id="Description_AR" name="Description_AR" required></textarea>
+
+                    <label class="form-label" for="Type">Choose the type</label>
+                    <select id="Type" name="Type" class="form-select" required>
+                        <option value="">-- Choose --</option>
+                        <option value="image">image</option>
+                        <option value="link">link+image</option>
+                        <option value="Product">Product</option>
+                    </select>
+
+                    <input type="hidden" id="HiddenType" name="Type" />
+                    <!-- المنطقة الديناميكية حسب النوع -->
+                    <div id="dynamic-area"></div>
+                    <br />
+                    <button class="btn btn-success d-grid w-100" type="submit">submit</button>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        document.getElementById("Type").addEventListener("change", function () {
+            var selected = this.value.toLowerCase();
+            var container = document.getElementById("dynamic-area");
+            container.innerHTML = "";
+              document.getElementById("HiddenType").value = selected;
+            if (selected === "image") {
+                container.innerHTML = `
+                    <label class="form-label">Choose an image:</label>
+                    <input type="file" class="form-control" id="image" name="image" accept="image/*" />
+
+                `;
+            } else if (selected === "link") {
+                container.innerHTML = `
+                    <label class="form-label">Choose an image:</label>
+                    <input type="file" class="form-control" id="Image" name="Image" accept="image/*" />
+
+                    <label>URL:</label>
+                    <input class="form-control" type="url" id="ExternalLink" name="ExternalLink" placeholder="https://example.com" />
+                `;
+            } else if (selected === "product") {
+                container.innerHTML = "Loading products...";
+
+                fetch("/PredectCozaStore/GetAllPredectForSlider")
+                    .then(response => response.json())
+                    .then(data => {
+                         console.log("البيانات الراجعة من GetProducts:", data);
+                        if (!Array.isArray(data) || data.length === 0) {
+                            container.innerHTML = "There are no products available.";
+                            return;
+                        }
+
+                        let html = `
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                        `;
+                        data.forEach(product => {
+                            html += `
+                             <label style="border: 1px solid #ccc; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; width: 150px; text-align: center;">
+                                 <input class="form-check-input" type="radio" name="ProductId" value="${product.id}" style="margin-bottom: 10px;" required>
+                                 <img src="${product.imega}" alt="${product.name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;" />
+                              <strong>${product.name}</strong>
+                                <span>${product.price} $</span>
+                             </label> `;
+
+
+                        });
+                        html += `</div>`;
+                         html += `
+                         <label class="form-label">Choose an image:</label>
+                          <input type="file" class="form-control" id="Image" name="Image" accept="image/*" required />`;
+                        container.innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error("Error fetching products:", error);
+                        container.innerHTML = "An error occurred while loading the products..";
+                    });
+            }
+        });
+    </script>
+}
+

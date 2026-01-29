@@ -1,0 +1,93 @@
+﻿@model ProfileViewModel
+@{
+    ViewData["Title"] = "ViewProfile";
+}
+
+<!-- Content page -->
+<section class="bg0 p-t-104 p-b-116">
+	<div class="container">
+
+		<div class=" bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
+			<form asp-action="Profile" asp-controller="Account" method="post">
+
+				@* <h4 class="mtext-105 cl2 txt-center p-b-30">
+					Profile Picturee
+				</h4>
+
+				<div class="bor8 m-b-20 how-pos4-parent">
+					<input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="file" name="ProfileFilePicture" id="ProfileFilePicture" placeholder="ProfileFilePicture">
+				</div>
+
+			    <h4 class="mtext-105 cl2 txt-center p-b-30">
+					Frist Name
+				</h4>
+
+				<div class="bor8 m-b-20 how-pos4-parent">
+					<input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="FristName" id="FristName" placeholder="FristName">
+					
+				</div>
+				<h4 class="mtext-105 cl2 txt-center p-b-30">
+					Last Name
+				</h4>
+
+				<div class="bor8 m-b-20 how-pos4-parent">
+					<input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="LastName" id="LastName" placeholder="LastName">
+					
+				</div>
+				<h4 class="mtext-105 cl2 txt-center p-b-30">
+					Full Name
+				</h4>
+
+				<div class="bor8 m-b-20 how-pos4-parent">
+					<input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="FullNames" id="FullNames" placeholder="FullNames">
+					
+				</div>
+				<h4 class="mtext-105 cl2 txt-center p-b-30">
+					UserName
+				</h4>
+
+				<div class="bor8 m-b-20 how-pos4-parent">
+					<input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="UserName" id="UserName" placeholder="UserName">
+
+				</div>
+				 *@
+
+				<div class="form-group m-b-20">
+					<label for="ProfileFilePicture" class="form-label">Profile Picture</label>
+					<input class="form-control" type="file" name="ProfileFilePicture" id="ProfileFilePicture">
+				</div>
+
+				<div class="form-group m-b-20">
+					<label for="FristName" class="form-label">First Name</label>
+					<input class="form-control" type="text" name="FristName" id="FristName" placeholder="Enter First Name">
+				</div>
+
+				<div class="form-group m-b-20">
+					<label for="LastName" class="form-label">Last Name</label>
+					<input class="form-control" type="text" name="LastName" id="LastName" placeholder="Enter Last Name">
+				</div>
+
+				<div class="form-group m-b-20">
+					<label for="FullNames" class="form-label">Full Name</label>
+					<input class="form-control" type="text" name="FullNames" id="FullNames" placeholder="Enter Full Name">
+				</div>
+
+				<div class="form-group m-b-20">
+					<label for="UserName" class="form-label">UserName</label>
+					<input class="form-control" type="text" name="UserName" id="UserName" placeholder="Enter UserName">
+				</div>
+
+
+				<button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
+					Submit
+				</button>
+			</form>
+
+			@if (TempData["Success"] != null)
+			{
+				<div class="alert alert-success mt-2">@TempData["Success"]</div>
+			}
+		</div>
+	</div>
+</section>
+
